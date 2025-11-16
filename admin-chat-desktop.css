@@ -1,0 +1,125 @@
+/* ============================================================
+   🖥️ ADMIN — CHAT (DESKTOP ≥ 801px)
+   Estilo Clean Corporate — Admin direita / User esquerda
+   ============================================================ */
+
+@media (min-width: 801px) {
+
+  /* Shell do chat dividido */
+  .chat-shell {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+  }
+
+  /* Lista de conflitos */
+  .chat-list {
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px;
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+  }
+
+  .chat-list .item {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background: #0f172ab0;
+    cursor: pointer;
+    transition: .15s;
+  }
+
+  .chat-list .item:hover { background: #1a2540; }
+  .chat-list .item.active {
+    background: #1e3a8ab0;
+    border: 1px solid #3b82f6;
+  }
+
+  /* Area do chat */
+  .chat-area {
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 160px);
+  }
+
+  /* Título + ID */
+  #chatTitulo {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  #chatInfo {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    opacity: .7;
+  }
+
+  /* Área de mensagens */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Bolha do usuário */
+  .msg.user {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 4px;
+    background: #1f2937d0;
+    color: #e5e7eb;
+    align-self: flex-start;
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+  }
+
+  /* Bolha do admin */
+  .msg.admin {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    background: linear-gradient(120deg, #2563eb, #3b82f6);
+    color: white;
+    align-self: flex-end;
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+  }
+
+  .msg small {
+    display: block;
+    font-size: 10px;
+    opacity: .7;
+    margin-top: 4px;
+  }
+
+  /* Composer */
+  .composer {
+    display: flex;
+    gap: 10px;
+  }
+
+  .composer input {
+    flex: 1;
+    padding: 13px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: #0f172ab0;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .composer button {
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+}

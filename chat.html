@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat — Mediação Comunitária</title>
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Global -->
+  <link rel="stylesheet" href="css/global-dasktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/global-mobile.css" media="(max-width: 800px)">
+
+  <!-- Chat -->
+  <link rel="stylesheet" href="css/chat-dasktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/chat-mobile.css" media="(max-width: 800px)">
+</head>
+<body>
+
+<!-- Partículas -->
+<div class="particles" id="particles"></div>
+
+<div class="layout">
+  <!-- ===== DESKTOP: Sidebar fixa / MOBILE: off-canvas ===== -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <div>
+        <div style="font-weight:700">Mediação Comunitária</div>
+        <small>Área do Usuário</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="nav-link" href="home.html">🏠 Início</a>
+      <a class="nav-link" href="conflito.html">📝 Registrar Conflito</a>
+      <a class="nav-link" href="andamento.html">📂 Meus Conflitos</a>
+      <a class="nav-link" href="dados.html">👤 Meus Dados</a>
+      <a class="nav-link active" href="chat.html">📨 Suporte / Chat</a>
+      <a class="nav-link" href="#" id="btnSair">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main>
+    <!-- MOBILE: header fixo com voltar + título + menu ☰ -->
+    <header class="chat-mobile-header">
+      <button class="back" id="backToList">←</button>
+      <div class="hgroup">
+        <div class="title" id="chatTitulo">Chat</div>
+        <small class="sub" id="chatInfo">—</small>
+      </div>
+      <button class="toggle" id="toggleMenu">☰</button>
+    </header>
+
+    <!-- DESKTOP: topbar simples -->
+    <div class="topbar-desktop">
+      <div>
+        <div class="chat-title" id="chatTituloDesk">Chat das Suas Mediações</div>
+        <div class="chat-sub" id="chatInfoDesk">Selecione uma mediação à esquerda e converse com o mediador</div>
+      </div>
+      <div class="whoami" id="whoamiDesk">Conectando…</div>
+    </div>
+
+    <!-- DESKTOP: shell 2 colunas / MOBILE: apenas o painel do chat -->
+    <div class="shell">
+      <!-- Lista (DESKTOP apenas) -->
+      <section class="conf-list" id="confListDesktop">
+        <div class="conf-sub">Carregando suas mediações…</div>
+      </section>
+
+      <!-- Painel do chat -->
+      <section class="chat-panel">
+        <div class="chat-header-desktop">
+          <div class="chat-title" id="chatTituloDesk2">Nenhuma mediação selecionada</div>
+          <div class="chat-sub" id="chatInfoDesk2">—</div>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+          <p class="empty" id="emptyState">Selecione uma mediação à esquerda 👈</p>
+        </div>
+
+        <div class="composer">
+          <textarea id="msg" placeholder="Escreva sua mensagem... (Enter envia, Shift+Enter quebra linha)" disabled></textarea>
+          <button class="send" id="sendBtn" disabled>➤</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Redirecionamento: se for MOBILE (≤800) e NÃO tiver ?id=, vai para a lista
+  (function ensureMobileRoute(){
+    const isMobile = window.matchMedia("(max-width: 800px)").matches;
+    const params = new URLSearchParams(location.search);
+    if(isMobile && !params.get("id")){
+      location.replace("chat-list.html");
+    }
+  })();
+
+  // Partículas
+  (function particles(){
+    const wrap = document.getElementById("particles");
+    for(let i=0;i<90;i++){
+      const d=document.createElement("div");
+      d.className="dot";
+      d.style.left=Math.random()*100+"vw";
+      d.style.top=Math.random()*100+"vh";
+      d.style.animationDelay=Math.random()*10+"s";
+      wrap.appendChild(d);
+    }
+  })();
+
+  // Menu mobile (usa CSS do global-mobile)
+  const sidebarMobile = document.getElementById("sidebar");
+  const toggleMobile = document.getElementById("toggleMenu");
+  let overlay = document.getElementById("menu-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menu-overlay";
+    document.body.appendChild(overlay);
+  }
+  toggleMobile?.addEventListener("click", () => {
+    sidebarMobile.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+  overlay?.addEventListener("click", () => {
+    sidebarMobile.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Supabase
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const whoamiDesk  = document.getElementById("whoamiDesk");
+  const confListDk  = document.getElementById("confListDesktop");
+  const chatBody    = document.getElementById("chatBody");
+  const emptyState  = document.getElementById("emptyState");
+  const input       = document.getElementById("msg");
+  const sendBtn     = document.getElementById("sendBtn");
+  const backToList  = document.getElementById("backToList");
+
+  // Títulos (mobile e desktop)
+  const tMob  = document.getElementById("chatTitulo");
+  const iMob  = document.getElementById("chatInfo");
+  const tD1   = document.getElementById("chatTituloDesk");
+  const iD1   = document.getElementById("chatInfoDesk");
+  const tD2   = document.getElementById("chatTituloDesk2");
+  const iD2   = document.getElementById("chatInfoDesk2");
+
+  const params = new URLSearchParams(location.search);
+  const chatId = params.get("id");
+
+  let user = null;
+  let conflitoAtual = null;
+  let realtimeSub = null;
+
+  // Sessão + bootstrap
+  init();
+  async function init(){
+    const { data } = await db.auth.getUser();
+    if(!data?.user){ location.href="index.html"; return; }
+    user = data.user;
+    whoamiDesk.textContent = user.user_metadata?.nome || user.email || "Você";
+
+    if (window.matchMedia("(min-width: 801px)").matches) {
+      // Desktop: carrega lista na esquerda
+      await loadConflitosDoUsuarioDesktop();
+    } else {
+      // Mobile: precisa de id na URL (garantido pelo redirect); carrega apenas o chat
+      if(chatId) {
+        await mountChatById(chatId);
+      }
+    }
+  }
+
+  // DESKTOP: lista de conversas
+  async function loadConflitosDoUsuarioDesktop(){
+    confListDk.innerHTML = `<div class="conf-sub">Carregando…</div>`;
+    const { data, error } = await db
+      .from("conflitos")
+      .select("*")
+      .eq("usuario_id", user.id)
+      .order("criado_em", { ascending:false });
+
+    if(error){
+      confListDk.innerHTML = `<div class="conf-sub">Erro: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if(!data || !data.length){
+      confListDk.innerHTML = `<div class="conf-sub">Você ainda não possui mediações. Registre uma em “Registrar Conflito”.</div>`;
+      return;
+    }
+
+    confListDk.innerHTML = "";
+    data.forEach(c=>{
+      const el = document.createElement("div");
+      el.className = "conf-item";
+      el.dataset.id = c.id;
+      el.innerHTML = `
+        <div class="conf-title">${escapeHtml(c.titulo||"Mediação")}</div>
+        <div class="conf-sub">${escapeHtml(c.envolvidos || "-")} · ${escapeHtml(c.status || "Em análise")}</div>
+      `;
+      el.addEventListener("click", ()=>mountChat(c));
+      confListDk.appendChild(el);
+    });
+  }
+
+  function markActiveDesktop(id){
+    document.querySelectorAll(".conf-item").forEach(n=>{
+      n.classList.toggle("active", String(n.dataset.id)===String(id));
+    });
+  }
+
+  // MOBILE: voltar para lista
+  backToList?.addEventListener("click", ()=>{
+    if(window.matchMedia("(max-width: 800px)").matches){
+      location.href = "chat-list.html";
+    }
+  });
+
+  async function mountChatById(id){
+    // Busca a conversa para preencher título/status
+    const { data, error } = await db.from("conflitos").select("*").eq("id", id).single();
+    if(error || !data){
+      tMob.textContent = "Chat";
+      iMob.textContent = "—";
+      return;
+    }
+    mountChat(data, true);
+  }
+
+  async function mountChat(conf, fromDesktop=false){
+    conflitoAtual = { id: conf.id, titulo: conf.titulo || "Mediação", status: conf.status || "Em análise" };
+
+    // Títulos (mobile e desktop)
+    tMob.textContent = conflitoAtual.titulo;
+    iMob.textContent = `ID: ${conf.id} · ${conflitoAtual.status}`;
+    tD1.textContent  = conflitoAtual.titulo;
+    iD1.textContent  = `ID: ${conf.id} · ${conflitoAtual.status}`;
+    tD2.textContent  = conflitoAtual.titulo;
+    iD2.textContent  = `ID: ${conf.id} · ${conflitoAtual.status}`;
+
+    input.disabled = false; sendBtn.disabled = false;
+    if(fromDesktop) markActiveDesktop(conf.id);
+
+    await loadMensagens();
+
+    if(realtimeSub){ try{ db.removeChannel(realtimeSub); }catch{} }
+    realtimeSub = db.channel("chat_user_conf_"+conf.id)
+      .on("postgres_changes", { event:"INSERT", schema:"public", table:"mensagens", filter:`conflito_id=eq.${conf.id}` }, payload=>{
+        const m = payload.new;
+        const isAdmin = Number(m.remetente)===1 || Number(m.remetente_tip)===1;
+        const isSameUser = String(m.usuario_id)===String(user.id);
+        if(isAdmin || isSameUser){
+          addMsg(m);
+          scrollBottom();
+        }
+      })
+      .subscribe();
+  }
+
+  async function loadMensagens(){
+    const box = chatBody;
+    box.innerHTML = "";
+    if(!conflitoAtual){ emptyState.style.display="block"; return; }
+
+    const { data, error } = await db
+      .from("mensagens")
+      .select("*")
+      .eq("conflito_id", conflitoAtual.id)
+      .order("created_at", { ascending:true });
+
+    if(error){
+      box.innerHTML = `<div class="empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if(!data || !data.length){
+      emptyState.style.display = "block";
+      emptyState.textContent = "Sem mensagens. Diga um olá 👋";
+      return;
+    }
+
+    emptyState.style.display = "none";
+    data.forEach(addMsg);
+    scrollBottom();
+  }
+
+  function addMsg(m){
+    const isAdmin = Number(m.remetente)===1 || Number(m.remetente_tip)===1;
+    const isUser  = !isAdmin;
+    const label = isUser ? (user.user_metadata?.nome || "Você") : "Mediador";
+    const ts = m.created_at || m.criado_em || new Date().toISOString();
+    const time = formatTime(ts);
+
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.gap = "4px";
+
+    const bubble = document.createElement("div");
+    bubble.className = "msg " + (isUser ? "from-user" : "from-admin");
+    bubble.textContent = m.mensagem || m.texto || "";
+
+    const meta = document.createElement("div");
+    meta.className = "meta " + (isUser ? "right" : "left");
+    meta.textContent = `${label} — ${time}`;
+
+    wrap.appendChild(meta);
+    wrap.appendChild(bubble);
+    chatBody.appendChild(wrap);
+  }
+
+  function formatTime(ts){
+    try{
+      return new Date(ts).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
+    }catch{ return "" }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  input.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  async function sendMessage(){
+    if(!conflitoAtual) return;
+    const texto = input.value.trim();
+    if(!texto) return;
+
+    const nova = {
+      conflito_id: conflitoAtual.id,
+      usuario_id: user.id,
+      mensagem: texto,
+      remetente: 0,
+      created_at: new Date().toISOString()
+    };
+
+    if(emptyState) emptyState.style.display = "none";
+    addMsg(nova);
+    scrollBottom();
+    input.value = "";
+
+    const { error } = await db.from("mensagens").insert([{
+      conflito_id: nova.conflito_id,
+      usuario_id: nova.usuario_id,
+      mensagem: nova.mensagem,
+      remetente: 0
+    }]);
+
+    if(error){
+      const warn = document.createElement("div");
+      warn.className = "meta right";
+      warn.style.color = "#f87171";
+      warn.textContent = "Falha ao enviar. Tente novamente.";
+      chatBody.appendChild(warn);
+      scrollBottom();
+    }
+  }
+
+  function scrollBottom(){
+    requestAnimationFrame(()=>{ chatBody.scrollTop = chatBody.scrollHeight; });
+  }
+
+  document.getElementById("btnSair")?.addEventListener("click", async()=>{
+    await db.auth.signOut(); location.href="index.html";
+  });
+
+  function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+</script>
+</body>
+</html>

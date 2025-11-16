@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Dashboard</title>
+
+  <!-- ✅ Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- ✅ CSS DESKTOP & MOBILE -->
+  <link rel="stylesheet" href="css///admin-dashboard-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css///admin-dashboard-mobile.css" media="(max-width: 800px)">
+
+  <style>
+    /* ✅ Partículas flutuando ao fundo */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle-dot {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, #ffffff00 60%);
+      opacity: .8;
+      filter: drop-shadow(0 0 8px #7dd3fc);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      from { transform: translateY(110vh) }
+      to { transform: translateY(-10vh) }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ✅ PARTÍCULAS -->
+<div class="particles" id="particles"></div>
+
+<div class="admin-shell">
+
+  <!-- ✅ SIDEBAR -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <h1>MediAção • Admin</h1>
+    </div>
+    <nav class="nav">
+      <a href="admin-dashboard.html" class="active"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- ✅ CONTEÚDO -->
+  <main class="admin-content">
+    
+
+    <!-- ✅ TOPO + BOTÃO MOBILE -->
+    <div class="header">
+      <div class="topbar-mobile">
+      <button id="toggleMenu">☰</button>
+      <span>Dashboard</span>
+    </div>
+      <div>
+        <h2>Visão geral</h2>
+        <div class="crumbs">Admin &rsaquo; Dashboard</div>
+      </div>
+    </div>
+
+    <section class="cards" id="cards">
+      <div class="card">
+        <div class="title">Conflitos</div>
+        <div class="value" id="kpiConflitos">—</div>
+        <div class="hint" id="kpiPendentes">Pendentes: —</div>
+      </div>
+      <div class="card">
+        <div class="title">Mensagens</div>
+        <div class="value" id="kpiMensagens">—</div>
+        <div class="hint">Total no período</div>
+      </div>
+      <div class="card">
+        <div class="title">Usuários</div>
+        <div class="value" id="kpiUsuarios">—</div>
+        <div class="hint">Cadastrados</div>
+      </div>
+      <div class="card">
+        <div class="title">Admins</div>
+        <div class="value" id="kpiAdmins">—</div>
+        <div class="hint">Com acesso</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-bottom:10px;">Atalhos</h3>
+      <div class="controls">
+        <a class="btn" href="admin-conflitos.html">Abrir Conflitos</a>
+        <a class="btn" href="admin-chat.html">Abrir Chat</a>
+        <a class="btn secondary" href="admin-estatisticas.html">Ver Estatísticas</a>
+        <a class="btn secondary" href="admin-config.html">Configurações</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ✅ SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+  const { createClient } = supabase;
+  const db = createClient(supabaseUrl, supabaseKey);
+
+  (async () => {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return location.href = "admin.html";
+    const { data: perfil } = await db.from("usuarios").select("is_admin").eq("id", user.id).maybeSingle();
+    if (!perfil?.is_admin) return location.href = "index.html";
+    loadKPIs();
+  })();
+
+  async function count(table, filter) {
+    const q = db.from(table).select('*', { count: 'exact', head: true });
+    if (filter) return (await filter(q)).count ?? 0;
+    const { count } = await q; return count ?? 0;
+  }
+
+  async function loadKPIs(){
+    const totalConflitos = await count('conflitos');
+    const pendentes = await count('conflitos', q => q.eq('status', 'Em análise'));
+    const totalMensagens = await count('mensagens');
+    const totalUsuarios = await count('usuarios');
+    const totalAdmins = await count('usuarios', q => q.eq('is_admin', true));
+
+    document.getElementById('kpiConflitos').textContent = totalConflitos;
+    document.getElementById('kpiPendentes').textContent = `Pendentes: ${pendentes}`;
+    document.getElementById('kpiMensagens').textContent = totalMensagens;
+    document.getElementById('kpiUsuarios').textContent = totalUsuarios;
+    document.getElementById('kpiAdmins').textContent = totalAdmins;
+  }
+
+  document.getElementById('logout').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    await db.auth.signOut();
+    localStorage.removeItem("usuario");
+    location.href = "index.html";
+  });
+
+  /* ✅ MENU MOBILE (botão ☰) */
+  const sidebar = document.getElementById("sidebar");
+  const toggleMenu = document.getElementById("toggleMenu");
+
+  let overlay = document.getElementById("menu-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menu-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  toggleMenu?.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay?.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  /* ✅ PARTÍCULAS */
+  (function spawnParticles(){
+    const wrap = document.getElementById('particles');
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const N = Math.min(120, Math.floor((W*H)/18000));
+
+    for(let i=0;i<N;i++){
+      const d = document.createElement('div');
+      d.className = 'particle-dot';
+      d.style.left = Math.random()*100 + 'vw';
+      d.style.top = (Math.random()*100) + 'vh';
+      d.style.animationDelay = (Math.random()*12)+'s';
+      d.style.opacity = (0.35 + Math.random()*0.65).toFixed(2);
+      d.style.transform = `translateY(${Math.random()*110}vh)`;
+      wrap.appendChild(d);
+    }
+  })();
+</script>
+
+</body>
+</html>

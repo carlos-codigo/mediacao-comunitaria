@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Conflitos — Admin • Mediação Comunitária</title>
+
+<!-- Fonte -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<!-- CSS GLOBAL -->
+<link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+<link rel="stylesheet" href="css/admin-mobile.css" media="(max-width: 800px)">
+
+<!-- CSS ESPECÍFICO DA PÁGINA -->
+<link rel="stylesheet" href="css/admin-conflitos-desktop.css" media="(min-width: 801px)">
+<link rel="stylesheet" href="css/admin-conflitos-mobile.css" media="(max-width: 800px)">
+</head>
+<body>
+
+<!-- Partículas -->
+<div class="particles" id="particles"></div>
+
+<div class="admin-shell">
+
+  <!-- SIDEBAR GLOBAL -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo">
+      <div class="brand-info">
+        <h1>MediAção • Admin</h1>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html" class="active"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- OVERLAY MOBILE -->
+  <div id="admin-overlay"></div>
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+
+    <div class="topbar-mobile">
+      <button id="toggleMenu">☰</button>
+      <span>Conflitos</span>
+    </div>
+
+    <!-- TOPO DESKTOP -->
+    <div class="header">
+      <h2>Conflitos</h2>
+      <div class="crumbs">Admin &rsaquo; Conflitos</div>
+    </div>
+
+    <!-- LISTA -->
+    <div class="list" id="lista">
+      <div class="muted">Carregando...</div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const lista = document.getElementById("lista");
+
+  init();
+  async function init(){
+    const { data:{ user } } = await db.auth.getUser();
+    if(!user){ location.href="admin.html"; return; }
+
+    const { data:perfil } = await db.from("usuarios")
+      .select("is_admin")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if(!perfil?.is_admin){
+      alert("Acesso restrito a administradores");
+      location.href="index.html";
+      return;
+    }
+
+    await load();
+  }
+
+  function badgeClass(s){
+    return s==="Em andamento" ? "status-andamento"
+         : s==="Resolvido" ? "status-resolvido"
+         : "status-analise";
+  }
+
+  async function load(){
+    const { data, error } = await db.from("conflitos")
+      .select("*")
+      .order("criado_em",{ascending:false});
+
+    if(error){
+      lista.innerHTML = "<div class='muted'>Erro ao carregar.</div>";
+      return;
+    }
+    if(!data?.length){
+      lista.innerHTML = "<div class='muted'>Nenhum conflito registrado.</div>";
+      return;
+    }
+
+    lista.innerHTML = "";
+    data.forEach(c=>{
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="info">
+          <div class="title">${c.titulo || "Sem título"}</div>
+
+          <div class="muted">Usuário: ${c.usuario_id}</div>
+          <div class="muted">Criado: ${new Date(c.criado_em).toLocaleString("pt-BR")}</div>
+
+          <!-- NOVOS CAMPOS -->
+          <div class="muted">Envolvidos: ${c.envolvidos || "-"}</div>
+          <div class="muted">CPF(s): ${c.cpfs || "-"}</div>
+        </div>
+
+        <div class="actions">
+          <span class="badge ${badgeClass(c.status)}">${c.status}</span>
+          <a class="btn" href="admin-conflito-detalhe.html?id=${c.id}">Gerenciar</a>
+        </div>
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  document.getElementById("logout").addEventListener("click", async(e)=>{
+    e.preventDefault();
+    await db.auth.signOut();
+    location.href = "index.html";
+  });
+
+  /* MENU MOBILE */
+  const menuBtn = document.getElementById("toggleMenu");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("admin-overlay");
+
+  menuBtn.addEventListener("click", ()=>{
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+  });
+
+  overlay.addEventListener("click", ()=>{
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+  });
+
+  // Partículas
+  const part = document.getElementById("particles");
+  for(let i=0; i<70; i++){
+    const d=document.createElement("div");
+    d.className="dot";
+    d.style.left=Math.random()*100+"vw";
+    d.style.top=Math.random()*100+"vh";
+    d.style.animationDelay=Math.random()*12+"s";
+    part.appendChild(d);
+  }
+</script>
+
+</body>
+</html>

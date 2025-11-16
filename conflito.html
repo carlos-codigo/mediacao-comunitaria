@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Novo Conflito — Mediação Comunitária</title>
+
+  <!-- ✅ Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ CSS GLOBAL -->
+  <link rel="stylesheet" href="css/global-dasktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/global-mobile.css" media="(max-width: 800px)">
+
+  <!-- ✅ CSS CONFLITO -->
+  <link rel="stylesheet" href="css/conflito-dasktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/conflito-mobile.css" media="(max-width: 800px)">
+</head>
+<body>
+
+<!-- ✅ Partículas -->
+<div class="particles" id="particles"></div>
+
+<div class="layout">
+
+  <!-- ✅ SIDEBAR -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" />
+      <div>
+        <h3>Mediação Comunitária</h3>
+        <small>Área do Usuário</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="nav-link" href="home.html"><span class="ico">🏠</span> Início</a>
+      <a class="nav-link active" href="conflito.html"><span class="ico">📝</span> Registrar Conflito</a>
+      <a class="nav-link" href="andamento.html"><span class="ico">📂</span> Meus Conflitos</a>
+      <a class="nav-link" href="dados.html"><span class="ico">👤</span> Meus Dados</a>
+      <a class="nav-link" href="chat.html"><span class="ico">📨</span> Suporte / Chat</a>
+      <a class="nav-link" href="#" id="btnSair"><span class="ico">🚪</span> Sair</a>
+    </nav>
+  </aside>
+
+  <!-- ======================================================
+       MAIN
+  ======================================================= -->
+  <main>
+
+    <button class="toggle" id="toggleMenu">☰ Menu</button>
+
+    <div class="card">
+      <h2>Registrar Novo Conflito</h2>
+      <p>Preencha os detalhes abaixo para iniciar o processo de mediação.</p>
+
+      <div class="field">
+        <label>Título do Conflito</label>
+        <input type="text" id="titulo" placeholder="Ex: Barulho excessivo à noite" />
+      </div>
+
+      <div class="field">
+        <label>Descreva a Situação</label>
+        <textarea id="descricao" placeholder="Descreva aqui o problema com detalhes..."></textarea>
+      </div>
+
+      <!-- ➕ NOVO CAMPO: ENVOLVIDOS -->
+      <div class="field">
+        <label>Envolvidos</label>
+        <input type="text" id="envolvidos" placeholder="Ex: João Silva e Marcos Souza" />
+      </div>
+
+      <!-- ➕ NOVO CAMPO: CPF(s) -->
+      <div class="field">
+        <label>CPF(s) dos Envolvidos</label>
+        <input type="text" id="cpfs" placeholder="Ex: 111.222.333-44 / 555.666.777-88" />
+      </div>
+
+      <button class="btn" id="enviarBtn">Enviar Conflito</button>
+      <p class="msg" id="msg"></p>
+    </div>
+
+  </main>
+</div>
+
+<!-- ======================================================
+     SUPABASE SDK
+======================================================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  /* Supabase */
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const msg = document.getElementById("msg");
+  let userID = null;
+
+  init();
+  async function init(){
+    const { data } = await db.auth.getUser();
+    if(!data?.user){ window.location.href = "index.html"; return; }
+    userID = data.user.id;
+  }
+
+  /* ======================================================
+     ENVIO DO CONFLITO (com os campos novos)
+  ======================================================= */
+  document.getElementById("enviarBtn").addEventListener("click", async()=>{
+
+    msg.textContent = "";
+
+    const titulo     = document.getElementById("titulo").value.trim();
+    const descricao  = document.getElementById("descricao").value.trim();
+    const envolvidos = document.getElementById("envolvidos").value.trim();
+    const cpfs       = document.getElementById("cpfs").value.trim();
+
+    if(!titulo || !descricao || !envolvidos || !cpfs){
+      msg.style.color = "#f87171";
+      msg.textContent = "Preencha todos os campos.";
+      return;
+    }
+
+    msg.style.color = "#38bdf8";
+    msg.textContent = "Enviando...";
+
+    const { error } = await db.from("conflitos").insert({
+      usuario_id: userID,
+      titulo,
+      descricao,
+      envolvidos,
+      cpfs,
+      status: "Em análise",
+      criado_em: new Date().toISOString()
+    });
+
+    if(error){
+      msg.style.color = "#f87171";
+      msg.textContent = "Erro ao enviar: " + error.message;
+    } else {
+      msg.style.color = "#4ade80";
+      msg.textContent = "Conflito enviado com sucesso ✅";
+
+      document.getElementById("titulo").value = "";
+      document.getElementById("descricao").value = "";
+      document.getElementById("envolvidos").value = "";
+      document.getElementById("cpfs").value = "";
+    }
+  });
+
+  /* ======================================================
+     LOGOUT
+  ======================================================= */
+  document.getElementById("btnSair").addEventListener("click", async()=>{
+    await db.auth.signOut();
+    window.location.href = "index.html";
+  });
+
+  /* ======================================================
+     PARTICULAS
+  ======================================================= */
+  const wrap = document.getElementById("particles");
+  for(let i=0;i<90;i++){
+    const d = document.createElement("div");
+    d.className="dot";
+    d.style.left = Math.random()*100+"vw";
+    d.style.top = Math.random()*100+"vh";
+    d.style.animationDelay = Math.random()*10+"s";
+    wrap.appendChild(d);
+  }
+</script>
+
+<!-- ======================================================
+     MENU MOBILE
+======================================================= -->
+<script>
+  const sidebarMobile = document.getElementById("sidebar");
+  const toggleMobile = document.getElementById("toggleMenu");
+
+  let overlay = document.getElementById("menu-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menu-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  toggleMobile?.addEventListener("click", () => {
+    sidebarMobile.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay?.addEventListener("click", () => {
+    sidebarMobile.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+</script>
+
+</body>
+</html>

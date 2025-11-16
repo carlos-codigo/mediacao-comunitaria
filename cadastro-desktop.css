@@ -1,0 +1,125 @@
+@media (min-width: 801px) {
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+
+    background:
+      radial-gradient(circle at 20% -10%, rgba(56,189,248,0.25), transparent 60%),
+      radial-gradient(circle at 120% 70%, rgba(167,139,250,0.25), transparent 60%),
+      linear-gradient(145deg, #0b0e18, #090c14, #05070c);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .page {
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 38px;
+    padding: 40px 30px;
+    animation: fade 0.6s ease;
+  }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo {
+    width: 700px;
+    filter: drop-shadow(0 0 18px rgba(56,189,248,0.5));
+    animation: glowDesk 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes glowDesk {
+    from { filter: drop-shadow(0 0 14px rgba(56,189,248,0.3)); }
+    to   { filter: drop-shadow(0 0 28px rgba(56,189,248,0.7)); }
+  }
+
+  .card {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    padding: 34px 28px;
+    border-radius: 24px;
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 25px 60px rgba(0,0,0,.45);
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .legend {
+    margin-bottom: 22px;
+    font-size: 15px;
+    color: #cbd5e1;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .input input {
+    width: 100%;
+    padding: 7px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    transition: .25s ease;
+  }
+
+  .input input:focus {
+    background: rgba(255,255,255,0.2);
+    border-color: #3b82f6;
+    box-shadow: 0 0 12px #3b82f645;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #22c55e);
+    color: white;
+    border: none;
+    font-size: 17px;
+    font-weight: 700;
+    box-shadow: 0 15px 35px rgba(0,0,0,.45);
+  }
+
+  .register {
+    margin-top: 16px;
+    text-align: center;
+    color: #cbd5e1;
+  }
+
+  .register a {
+    color: #60a5fa;
+    font-weight: 600;
+  }
+
+  .msg-erro {
+    margin-top: 12px;
+    color: #ef4444;
+    text-align: center;
+  }
+}

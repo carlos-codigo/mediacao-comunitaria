@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Configurações</title>
+
+  <!-- FONTES -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-mobile.css"  media="(max-width: 800px)">
+
+  <!-- CSS ESPECÍFICO DA PÁGINA -->
+  <link rel="stylesheet" href="css/admin-config-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-config-mobile.css"  media="(max-width: 800px)">
+</head>
+
+<body>
+<div class="admin-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <h1>MediAção • Admin</h1>
+    </div>
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html" class="active"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- MOBILE TOPBAR -->
+  <div class="topbar-mobile">
+    <button id="toggleMenu">☰</button>
+    <span>Configurações</span>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+    <div class="header">
+      <h2>Configurações do Sistema</h2>
+      <div class="crumbs">Admin &rsaquo; Configurações</div>
+    </div>
+
+    <section class="card">
+      <h3 style="margin-bottom:10px;">Identidade do Projeto</h3>
+      <div class="controls" style="gap:12px;">
+        <input id="nomeProjeto" class="input" placeholder="Nome do projeto (ex.: Mediação Comunitária)" />
+        <button id="salvarNome" class="btn">Salvar</button>
+      </div>
+      <div class="hint" style="margin-top:8px;">Salvo localmente<code></code>.</div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-bottom:10px;">Tema</h3>
+      <div class="controls" style="gap:12px;">
+        <button class="btn secondary" id="temaPadrao">Padrão</button>
+        <button class="btn secondary" id="temaNeon">Neon</button>
+        <button class="btn secondary" id="temaEscuro">Escuro</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-bottom:10px;">Exportar dados</h3>
+      <div class="controls" style="gap:12px;">
+        <button class="btn" id="expConflitos">Exportar Conflitos (CSV)</button>
+        <button class="btn" id="expMensagens">Exportar Mensagens (CSV)</button>
+        <button class="btn" id="expUsuarios">Exportar Usuários (CSV)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-bottom:10px; color:#ef9a9a;">Ações perigosas</h3>
+      <div class="controls" style="gap:12px;">
+        <button class="btn" style="background:#7f1d1d" id="wipeMensagens">Apagar TODAS as Mensagens</button>
+        <button class="btn" style="background:#7f1d1d" id="wipeConflitos">Apagar TODOS os Conflitos</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="menu-overlay"></div>
+  
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+
+  const { createClient } = supabase;
+  const db = createClient(supabaseUrl, supabaseKey);
+
+  /* ============================================================
+     🔒 Autenticação + Proteção admin
+     ============================================================ */
+  (async () => {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return location.href = "admin.html";
+
+    const { data: perfil } = await db
+      .from("usuarios")
+      .select("is_admin")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!perfil?.is_admin) return location.href = "index.html";
+
+    initConfig();
+  })();
+
+  /* ============================================================
+     ⚙ Configurações gerais
+     ============================================================ */
+  function initConfig(){
+    const nomeProjeto = localStorage.getItem('nomeProjeto') || 'Mediação Comunitária';
+    document.getElementById('nomeProjeto').value = nomeProjeto;
+
+    document.getElementById('salvarNome').onclick = () => {
+      localStorage.setItem('nomeProjeto', document.getElementById('nomeProjeto').value.trim() || 'Mediação Comunitária');
+      alert('Nome atualizado!');
+    };
+
+    const tema = localStorage.getItem('tema') || 'neon';
+    applyTheme(tema);
+    document.getElementById('temaPadrao').onclick = ()=> setTheme('padrao');
+    document.getElementById('temaNeon').onclick = ()=> setTheme('neon');
+    document.getElementById('temaEscuro').onclick = ()=> setTheme('escuro');
+
+    document.getElementById('expConflitos').onclick = ()=> exportCsv('conflitos');
+    document.getElementById('expMensagens').onclick = ()=> exportCsv('mensagens');
+    document.getElementById('expUsuarios').onclick = ()=> exportCsv('usuarios');
+
+    /* 👇 AGORA FUNCIONA DE VERDADE */
+    document.getElementById('wipeMensagens').onclick = wipeAllMessages;
+    document.getElementById('wipeConflitos').onclick = wipeAllConflitos;
+  }
+
+  function setTheme(t){ localStorage.setItem('tema', t); applyTheme(t); }
+
+  function applyTheme(t){
+    document.body.classList.remove('tema-padrao','tema-neon','tema-escuro');
+    if (t==='padrao') document.body.classList.add('tema-padrao');
+    else if (t==='escuro') document.body.classList.add('tema-escuro');
+    else document.body.classList.add('tema-neon');
+  }
+
+  /* ============================================================
+     📤 Exportação CSV
+     ============================================================ */
+  async function exportCsv(table){
+    const { data, error } = await db.from(table).select('*').limit(5000);
+    if (error) return alert('Erro: '+error.message);
+
+    const csv = toCSV(data||[]);
+    download(csv, `${table}.csv`, 'text/csv');
+  }
+
+  function toCSV(rows){
+    if (!rows.length) return '';
+    const headers = Object.keys(rows[0]);
+    const esc = v => `"${String(v??'').replace(/"/g,'""')}"`;
+    const lines = [headers.join(',')].concat(rows.map(r => headers.map(h=>esc(r[h])).join(',')));
+    return lines.join('\n');
+  }
+
+  function download(content, filename, type){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([content], { type }));
+    a.download = filename; a.click();
+  }
+
+  /* ============================================================
+     🧨 AÇÕES PERIGOSAS — VERSÃO FINAL, FUNCIONANDO!
+     ============================================================ */
+
+  async function wipeAllMessages(){
+    if (!confirm("Tem certeza que deseja apagar TODAS as mensagens?")) return;
+
+    const { error } = await db
+      .from("mensagens")
+      .delete()
+      .gt("criado_em", "1970-01-01");
+
+    if (error) return alert("Erro ao apagar mensagens: " + error.message);
+    alert("Todas as mensagens foram apagadas!");
+  }
+
+  async function wipeAllConflitos(){
+    if (!confirm("Tem certeza que deseja apagar TODOS os conflitos?")) return;
+
+    const { error } = await db
+      .from("conflitos")
+      .delete()
+      .gt("criado_em", "1970-01-01");
+
+    if (error) return alert("Erro ao apagar conflitos: " + error.message);
+    alert("Todos os conflitos foram apagados!");
+  }
+
+  /* ============================================================
+     🔚 Logout
+     ============================================================ */
+  document.getElementById('logout').addEventListener('click', async (e)=>{
+    e.preventDefault(); 
+    await db.auth.signOut(); 
+    localStorage.removeItem('usuario'); 
+    location.href='index.html';
+  });
+</script>
+
+<!-- SCRIPT DO MENU MOBILE -->
+<script>
+  const sidebar = document.getElementById("sidebar");
+  const toggleBtn = document.getElementById("toggleMenu");
+  const overlay = document.getElementById("menu-overlay");
+
+  if (toggleBtn && sidebar && overlay) {
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("show");
+    });
+
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("show");
+    });
+  }
+</script>
+
+</body>
+</html>

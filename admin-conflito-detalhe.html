@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerenciar Conflito — Admin • Mediação Comunitária</title>
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-mobile.css" media="(max-width: 800px)">
+
+  <!-- CSS ESPECÍFICO DA PÁGINA -->
+  <link rel="stylesheet" href="css/admin-conflito-detalhe-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-conflito-detalhe-mobile.css" media="(max-width: 800px)">
+</head>
+
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="admin-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo">
+      <h1>MediAção • Admin</h1>
+    </div>
+
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html" class="active"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <div id="admin-overlay"></div>
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+
+    <!-- TOPO MOBILE -->
+    <div class="admin-topbar">
+      <button id="menuBtn" class="topbar-btn">☰</button>
+      <div class="topbar-title">Gerenciar Conflito</div>
+    </div>
+
+    <!-- TOPO DESKTOP -->
+    <div class="header">
+      <h2>Gerenciar Conflito</h2>
+      <div class="crumbs">Admin › Conflitos › Detalhe</div>
+    </div>
+
+    <!-- CARD -->
+    <div class="conf-card" id="cardInfo">
+
+      <h1 id="tituloConf">Carregando...</h1>
+
+      <p class="label">Descrição</p>
+      <p class="value" id="descConf"></p>
+
+      <p class="label">Envolvidos</p>
+      <p class="value" id="envConf"></p>
+
+      <!-- NOVO CAMPO CPF -->
+      <p class="label">CPF(s)</p>
+      <p class="value" id="cpfConf"></p>
+
+      <div id="statusBox" class="status-badge">Carregando...</div>
+
+      <div class="btns">
+        <button class="btn b-analise" data-status="Em análise">Em Análise</button>
+        <button class="btn b-andamento" data-status="Em andamento">Em Andamento</button>
+        <button class="btn b-resolvido" data-status="Resolvido">Resolvido</button>
+      </div>
+
+      <p id="msgStatus"></p>
+
+    </div>
+
+  </main>
+</div>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  // ID via URL
+  const params = new URLSearchParams(window.location.search);
+  const conflitoId = params.get("id");
+  if (!conflitoId) location.href = "admin-conflitos.html";
+
+  // Elementos
+  const tituloConf = document.getElementById("tituloConf");
+  const descConf   = document.getElementById("descConf");
+  const envConf    = document.getElementById("envConf");
+  const cpfConf    = document.getElementById("cpfConf");
+  const statusBox  = document.getElementById("statusBox");
+  const msgStatus  = document.getElementById("msgStatus");
+
+  // Carregar Conflito
+  carregar();
+  async function carregar(){
+    const { data, error } = await db.from("conflitos").select("*").eq("id", conflitoId).maybeSingle();
+    if(error || !data){
+      tituloConf.textContent = "Erro ao carregar";
+      return;
+    }
+
+    tituloConf.textContent = data.titulo;
+    descConf.textContent   = data.descricao || "Sem descrição";
+    envConf.textContent    = data.envolvidos || "Não informado";
+    cpfConf.textContent    = data.cpfs || "Não informado";
+
+    atualizarBadge(data.status);
+  }
+
+  // Atualiza Visual
+  function atualizarBadge(status){
+    statusBox.className = "status-badge";
+    if(status==="Resolvido") {
+      statusBox.classList.add("s-resolvido");
+      statusBox.textContent = "Resolvido";
+    }
+    else if(status==="Em andamento") {
+      statusBox.classList.add("s-andamento");
+      statusBox.textContent = "Em andamento";
+    }
+    else {
+      statusBox.classList.add("s-analise");
+      statusBox.textContent = "Em análise";
+    }
+  }
+
+  // Botões de Status
+  document.querySelectorAll(".btn").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const novo = btn.dataset.status;
+      const { error } = await db.from("conflitos").update({ status: novo }).eq("id", conflitoId);
+
+      if(error){
+        msgStatus.textContent = "Erro ao atualizar";
+        msgStatus.style.color = "red";
+        return;
+      }
+
+      atualizarBadge(novo);
+      msgStatus.style.color = "#22c55e";
+      msgStatus.textContent = "Status atualizado!";
+      setTimeout(()=> msgStatus.textContent="",1800);
+    });
+  });
+
+  // Logout
+  document.getElementById("logout").addEventListener("click", async()=>{
+    await db.auth.signOut();
+    location.href = "index.html";
+  });
+
+  // Partículas
+  const part = document.getElementById("particles");
+  for(let i=0;i<65;i++){
+    const d=document.createElement("div");
+    d.className="dot";
+    d.style.left=Math.random()*100+"vw";
+    d.style.top=Math.random()*100+"vh";
+    d.style.animationDelay=Math.random()*12+"s";
+    part.appendChild(d);
+  };
+
+  // Mobile Menu
+  const menuBtn = document.getElementById("menuBtn");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("admin-overlay");
+
+  menuBtn.addEventListener("click", ()=>{
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+  });
+
+  overlay.addEventListener("click", ()=>{
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+  });
+
+</script>
+
+</body>
+</html>

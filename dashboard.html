@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel - Mediação Comunitária</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg1:#0f172a;--bg2:#1e293b;
+      --accent:#3b82f6;--accent-2:#22c55e;
+      --text:#e5e7eb;--muted:#94a3b8;
+      --card:#0b1220cc;--shadow:0 20px 40px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, #2563eb33 0%, transparent 60%),
+        radial-gradient(1200px 600px at 110% 10%, #22c55e33 0%, transparent 60%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      display:flex;flex-direction:column;
+      min-height:100vh;
+      overflow-x:hidden;
+      opacity:0;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    /* ======= ANIMAÇÕES ======= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideMenu {
+      from { left: -250px; }
+      to { left: 0; }
+    }
+
+    /* ======= BANNER INSTITUCIONAL ======= */
+    .banner {
+      background:#fff;
+      color:#0f172a;
+      text-align:center;
+      padding:2.5rem 1rem;
+      box-shadow:0 3px 10px rgba(0,0,0,0.15);
+      z-index:10;
+    }
+    .banner h1 {
+      font-size:2rem;
+      font-weight:700;
+      margin-bottom:0.5rem;
+      color:#0f172a;
+    }
+    .banner p {
+      font-size:1rem;
+      color:#475569;
+      max-width:700px;
+      margin:0 auto;
+    }
+
+    /* ======= BLOCO DE CONTEÚDO ======= */
+    main {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:3rem 1.5rem;
+      text-align:center;
+    }
+    .info-card {
+      background:var(--card);
+      border:1px solid #ffffff22;
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      max-width:800px;
+      padding:2rem 2.5rem;
+      backdrop-filter:blur(10px);
+      line-height:1.6;
+      animation: fadeIn 1.2s ease;
+    }
+    .info-card h2 {
+      color:var(--accent-2);
+      margin-bottom:1rem;
+    }
+    .info-card p {
+      font-size:1rem;
+      color:#e2e8f0;
+      margin-bottom:1rem;
+    }
+    .quote {
+      margin-top:1.5rem;
+      font-style:italic;
+      color:#a5b4fc;
+      font-size:1rem;
+    }
+
+    footer {
+      text-align:center;
+      color:var(--muted);
+      font-size:.8rem;
+      padding:1rem;
+    }
+
+    /* ======= MENU LATERAL ======= */
+    #menuLateral {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      transition: left 0.3s ease;
+      z-index: 1000;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    #menuLateral.ativo {
+      left: 0;
+      animation: slideMenu 0.3s ease forwards;
+    }
+    .menu-header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #334155;
+    }
+    .menu-header h2 {
+      color: #22c55e;
+      font-size: 1.2rem;
+      margin-top: 5px;
+    }
+    .logo-menu { width: 80px; height: auto; margin-bottom: 5px; }
+    #menuLateral ul {
+      list-style: none;
+      padding: 20px;
+      flex: 1;
+    }
+    #menuLateral ul li { margin-bottom: 15px; }
+    #menuLateral ul li a {
+      text-decoration: none;
+      color: #e2e8f0;
+      font-size: 1rem;
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    #menuLateral ul li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ======= BOTÃO HAMBÚRGUER ======= */
+    .hamburguer {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 32px;
+      height: 26px;
+      cursor: pointer;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hamburguer div {
+      background: #000;
+      height: 4px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(2) { opacity: 0; }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- MENU LATERAL -->
+  <nav id="menuLateral">
+    <div class="menu-header">
+      <img src="assets/imagens/logo2.png" alt="Logo" class="logo-menu" />
+      <h2>Mediação</h2>
+    </div>
+    <ul>
+      <li><a href="dashboard.html">🏠 Início</a></li>
+      <li><a href="conflito.html">📝 Descrever Conflito</a></li>
+      <li><a href="andamento.html">📊 Andamento</a></li>
+      <li><a href="dados.html">👤 Meus Dados</a></li>
+      <li id="sair"><a href="#">🚪 Sair</a></li>
+    </ul>
+  </nav>
+
+  <!-- BOTÃO HAMBÚRGUER -->
+  <div id="hamburguer" class="hamburguer">
+    <div></div><div></div><div></div>
+  </div>
+
+  <!-- BANNER INSTITUCIONAL -->
+  <section class="banner">
+    <h1>Projeto <strong>MediAção</strong></h1>
+    <p>Justiça ao alcance da comunidade — promovendo soluções pacíficas, empáticas e acessíveis para todos.</p>
+  </section>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <div class="info-card">
+      <h2>Sobre o Projeto</h2>
+      <p>O projeto <strong>MediAção Comunitária</strong> nasceu como uma iniciativa acadêmica voltada à prática da mediação de conflitos dentro das comunidades, aproximando o diálogo, a escuta e o entendimento mútuo como ferramentas de transformação social.</p>
+
+      <p>Desenvolvido por estudantes sob a orientação do professor <strong>Marcos Caldeira</strong>, o projeto busca oferecer um ambiente digital onde cidadãos possam relatar, acompanhar e resolver conflitos de forma colaborativa, segura e humanizada.</p>
+
+      <p>Este é um projeto de institucionalização que integra tecnologia, direito e cidadania, reforçando o papel social das universidades na construção de uma cultura de paz e cooperação.</p>
+
+      <p class="quote">“A mediação é a ponte entre o conflito e a compreensão.”</p>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Mediação Comunitária. Todos os direitos reservados.
+  </footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+    const SUPABASE_URL = "https://dtriltzrvdhnlxqbiced.supabase.co";const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const menu=document.getElementById("menuLateral");
+    const btn=document.getElementById("hamburguer");
+    const sair=document.getElementById("sair");
+
+    btn.addEventListener("click",()=>menu.classList.toggle("ativo"));
+    menu.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>menu.classList.remove("ativo")));
+    sair.addEventListener("click",async()=>{
+      await supabase.auth.signOut();
+      localStorage.removeItem("usuario");
+      alert("Você saiu da conta.");
+      window.location.href="index.html";
+    });
+  </script>
+  
+</body>
+</html>

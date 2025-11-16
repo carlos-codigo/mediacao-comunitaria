@@ -1,0 +1,196 @@
+/* ===========================================================
+   📱 ADMIN DASHBOARD — MOBILE (≤ 800px)
+   Mantém o tema admin que você já usa (neon escuro),
+   adiciona o TOPO MOBILE (☰ Título ⋯) e menu com overlay.
+   =========================================================== */
+
+/* Reset básico */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+/* Paleta e tokens (iguais ao admin) */
+:root {
+  --bg1: #0a0f1f;
+  --bg2: #0f172a;
+  --surface: #0c1224e0;
+  --text: #e5e7eb;
+  --muted: #9aa7bd;
+
+  --primary: #3b82f6;
+  --secondary: #22c55e;
+  --violet: #8b5cf6;
+
+  --card-border: #1f2a44;
+  --shadow: 0 20px 40px rgba(0,0,0,.35);
+  --radius: 16px;
+
+  --row-glow: 0 8px 20px rgba(30,64,175,.25), 0 4px 12px rgba(16,185,129,.12);
+}
+
+/* Fundo com gradientes (não mexe na sidebar neon do admin) */
+body {
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+    radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+    radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+}
+
+/* Partículas — apenas classes utilitárias do dashboard */
+.particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.particle-dot {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ffffff00 60%);
+  opacity: .8; filter: drop-shadow(0 0 8px #7dd3fc);
+  animation: float 12s linear infinite;
+}
+@keyframes float {
+  from { transform: translateY(110vh) }
+  to   { transform: translateY(-10vh) }
+}
+
+/* ===== LAYOUT ===== */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile: sidebar vira off-canvas */
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  padding: 14px; /* respiro nas bordas */
+  gap: 14px;
+}
+
+/* ===== SIDEBAR (off-canvas no mobile) ===== */
+.admin-sidebar {
+  position: fixed;
+  top: 0; bottom: 0; left: -100%;
+  width: min(82vw, 320px);
+  background: linear-gradient(180deg, #0c1224ee, #0a1020f5);
+  border-right: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  padding-bottom: 20px;
+  z-index: 20;
+  transition: left .2s ease;
+  display: flex; flex-direction: column;
+}
+
+.admin-sidebar.open { left: 0; }
+
+.admin-sidebar .brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 16px; border-bottom: 1px solid var(--card-border);
+}
+.admin-sidebar .brand img { width: 40px; height: 40px; border-radius: 12px; object-fit: contain; }
+.admin-sidebar .brand h1 { font-size: 16px; font-weight: 800; letter-spacing: .3px; }
+
+.nav { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 12px; text-decoration: none;
+  color: #cfe2ff; background: linear-gradient(180deg, #0f1732, #0c142a);
+  border: 1px solid transparent; transition: .15s ease; position: relative; isolation: isolate;
+}
+.nav a .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #2563eb; display: inline-block;
+}
+.nav a:hover { transform: translateY(-1px); box-shadow: var(--row-glow); border-color: #264275; }
+.nav a.active { border-color: #33558f; box-shadow: 0 0 15px rgba(59,130,246,.45); }
+
+/* Overlay do menu (sem blur para não “congelar” a tela) */
+#admin-overlay {
+  position: fixed; inset: 0;
+  background: rgba(2, 6, 23, .55);
+  opacity: 0; visibility: hidden; transition: .2s ease;
+  z-index: 15;
+}
+#admin-overlay.show { opacity: 1; visibility: visible; }
+
+/* ===== CONTEÚDO ===== */
+.admin-content {
+  position: relative;
+  z-index: 1;
+  display: flex; flex-direction: column; gap: 14px;
+  /* o padding externo vem do shell; aqui só respiro vertical entre blocos */
+}
+
+/* ===== TOPO MOBILE (B) ===== */
+.admin-topbar {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0e1630e6, #0a1228e6);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(0px); /* sem blur para evitar problemas no clique */
+}
+
+.topbar-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  border: 1px solid #2a3f6b;
+  background: #0e1730; color: #cfe2ff;
+  font-weight: 700; cursor: pointer; transition: .15s ease;
+}
+.topbar-btn:active { transform: translateY(1px); }
+
+.topbar-title {
+  text-align: center; font-weight: 800; letter-spacing: .3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ===== HEADER original (permanece; no mobile fica abaixo do topbar) ===== */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0e1630e6, #0a1228e6);
+  box-shadow: var(--shadow);
+}
+.header h2 { font-size: 18px; }
+.header .crumbs { color: var(--muted); font-size: 12px; }
+
+/* ===== CARDS GRID ===== */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr; /* uma coluna no mobile */
+  gap: 12px;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--card-border);
+  border-radius: 14px; box-shadow: var(--shadow);
+  padding: 14px; position: relative; overflow: hidden; backdrop-filter: blur(8px);
+}
+.card .title { color: #cbd5e1; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+.card .value { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+.card .hint  { color: var(--muted); font-size: 12px; }
+
+/* ===== ATALHOS ===== */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 6px;
+}
+.btn {
+  border: none; cursor: pointer; font-weight: 700; color: #fff;
+  padding: 12px; border-radius: 12px; transition: .15s ease;
+  text-align: center; text-decoration: none; display: inline-block;
+  background: linear-gradient(100deg, var(--primary) 0%, #6366f1 35%, var(--secondary) 100%);
+  box-shadow: 0 10px 20px rgba(59,130,246,.25), 0 6px 12px rgba(34,197,94,.18);
+}
+.btn.secondary {
+  background: linear-gradient(100deg, #0ea5e9 0%, #6366f1 35%, #22d3ee 100%);
+}
+
+/* ===== ADAPTAÇÕES MUITO PEQUENAS (≤ 380px) ===== */
+@media (max-width: 380px) {
+  .admin-topbar { grid-template-columns: 38px 1fr 38px; }
+  .topbar-btn { width: 38px; height: 38px; border-radius: 10px; }
+  .card .value { font-size: 24px; }
+}

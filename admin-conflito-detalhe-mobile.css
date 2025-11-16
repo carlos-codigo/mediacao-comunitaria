@@ -1,0 +1,186 @@
+/* ===========================================================
+   📱 CONFLITO DETALHE — MOBILE (≤ 800px)
+   Mantém padrão do admin mobile completo
+   =========================================================== */
+
+@media (max-width: 800px) {
+
+  body {
+    background:
+      radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+      radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+      radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+      linear-gradient(135deg, #0a0f1f, #0f172a);
+    overflow-x: hidden;
+  }
+
+  .admin-content {
+    padding: 100px 18px 20px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+
+  /* ===== TOPBAR MOBILE ===== */
+  .admin-topbar {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+
+    align-items: center;
+    gap: 12px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    padding: 14px 18px;
+
+    background: linear-gradient(180deg, #0e1630e6, #0a1228e6);
+    border-bottom: 1px solid #1f2a44;
+
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+
+  .topbar-btn {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #0e1730;
+    color: #cfe2ff;
+
+    font-size: 22px;
+    border-radius: 14px;
+
+    border: 1px solid #2a3f6b;
+  }
+
+  .topbar-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #e5e7eb;
+  }
+
+  /* ===== SIDEBAR MOBILE ===== */
+  .admin-sidebar {
+    width: min(85vw, 310px);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    transition: left .25s ease;
+    z-index: 200;
+  }
+
+  .admin-sidebar.open {
+    left: 0;
+  }
+
+  #admin-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: .25s;
+    z-index: 150;
+  }
+
+  #admin-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ===== CARD ===== */
+  .conf-card {
+    background: #0c1224e6;
+    border: 1px solid #1f2a44;
+
+    border-radius: 18px;
+    padding: 22px;
+
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .conf-card h1 {
+    font-size: 20px;
+    color: #22c55e;
+  }
+
+  .label {
+    font-size: 13px;
+    color: #9aa7bd;
+  }
+
+  .value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* BADGE */
+  .status-badge {
+    padding: 8px 16px;
+    border-radius: 999px;
+    width: fit-content;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid transparent;
+  }
+
+  .s-analise {
+    background:#1b2849;
+    color:#cfe2ff;
+    border-color:#2f4780;
+  }
+
+  .s-andamento {
+    background:#15351f;
+    color:#c8facc;
+    border-color:#2c5d40;
+  }
+
+  .s-resolvido {
+    background:#1b2b1f;
+    color:#86efac;
+    border-color:#3a6a45;
+  }
+
+  /* BOTÕES */
+  .btns {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .btn {
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+
+    text-align: center;
+    font-weight: 700;
+    color: white;
+
+    cursor: pointer;
+
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #22c55e);
+    box-shadow: 0 10px 20px rgba(59,130,246,.25);
+  }
+
+  #msgStatus {
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: center;
+  }
+}

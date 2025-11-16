@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mediação Comunitária — Andamento</title>
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ GLOBAL -->
+  <link rel="stylesheet" href="css/global-dasktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/global-mobile.css"  media="(max-width: 800px)">
+
+  <!-- ✅ ANDAMENTO -->
+  <link rel="stylesheet" href="css/andamento-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/andamento-mobile.css" media="(max-width: 800px)">
+</head>
+
+<body>
+  <!-- Partículas -->
+  <div class="particles" id="particles"></div>
+
+  <div class="layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside id="sidebar">
+      <div class="brand">
+        <img src="assets/imagens/logo2.png" alt="Logo" />
+        <div>
+          <h1>Mediação Comunitária</h1>
+          <small>Área do Usuário</small>
+        </div>
+      </div>
+
+      <nav>
+        <a class="nav-link" href="home.html"><span class="ico">🏠</span> Início</a>
+        <a class="nav-link" href="conflito.html"><span class="ico">📝</span> Registrar Conflito</a>
+        <a class="nav-link active" href="andamento.html"><span class="ico">📂</span> Meus Conflitos</a>
+        <a class="nav-link" href="dados.html"><span class="ico">👤</span> Meus Dados</a>
+        <a class="nav-link" href="chat.html"><span class="ico">📨</span> Suporte / Chat</a>
+        <a class="nav-link" href="#" id="sairBtn"><span class="ico">🚪</span> Sair</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="whoami">Conectando…</div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+      <header class="top">
+        <div class="hello">
+          <button class="toggle" id="toggleMenu">☰ Menu</button>
+          <h2>Meus Conflitos</h2>
+          <small id="welcomeLine">Acompanhe o andamento das suas mediações.</small>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Status</th>
+                  <th>Atualizado</th>
+                  <th style="text-align:right;">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyConflitos">
+                <tr><td colspan="4" style="text-align:center;">Carregando…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SUPABASE SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ========= SUPABASE =========
+    const SUPABASE_URL = "https://dtriltzrvdhnlxqbiced.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // ========= UI ELEMENTS =========
+    const sidebar = document.getElementById('sidebar');
+    const toggleMenu = document.getElementById('toggleMenu');
+    const sairBtn = document.getElementById('sairBtn');
+    const whoami = document.getElementById('whoami');
+    const welcomeLine = document.getElementById('welcomeLine');
+    const tbodyConflitos = document.getElementById('tbodyConflitos');
+
+    // ========= PARTICULAS =========
+    (function spawnParticles(){
+      const wrap = document.getElementById('particles');
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const N = Math.min(120, Math.floor((W*H)/18000));
+      for(let i=0;i<N;i++){
+        const d = document.createElement('div');
+        d.className = 'dot';
+        d.style.left = Math.random()*100 + 'vw';
+        d.style.top = (Math.random()*100) + 'vh';
+        d.style.animationDelay = (Math.random()*12)+'s';
+        d.style.opacity = (0.35 + Math.random()*0.65).toFixed(2);
+        d.style.transform = `translateY(${Math.random()*110}vh)`;
+        wrap.appendChild(d);
+      }
+    })();
+
+    // ========= MENU MOBILE =========
+    toggleMenu?.addEventListener('click', ()=> sidebar.classList.toggle('open'));
+
+    // ========= AUTH / DADOS =========
+    init();
+    async function init(){
+      const { data: { user } } = await db.auth.getUser();
+      if(!user){
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const nome = user.user_metadata?.nome || user.email || 'Usuário';
+      whoami.textContent = `Logado como: ${nome}`;
+      welcomeLine.textContent = `Olá, ${nome}! Veja abaixo suas mediações.`;
+
+      await loadConflitos(user.id);
+    }
+
+    function statusToTag(statusRaw){
+      const s = (statusRaw || 'Em análise');
+      if(/resolvido/i.test(s)) return `<span class="tag ok">${escapeHTML(s)}</span>`;
+      if(/andamento/i.test(s)) return `<span class="tag prog">${escapeHTML(s)}</span>`;
+      return `<span class="tag wait">${escapeHTML(s)}</span>`;
+    }
+
+    async function loadConflitos(userId){
+      tbodyConflitos.innerHTML = `<tr><td colspan="4" style="text-align:center;">Carregando…</td></tr>`;
+
+      let { data, error } = await db.from('conflitos')
+        .select('*')
+        .eq('usuario_id', userId)
+        .order('criado_em', { ascending:false });
+
+      if(error){
+        tbodyConflitos.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#fca5a5;">Erro ao carregar conflitos.</td></tr>`;
+        return;
+      }
+
+      if(!data || !data.length){
+        tbodyConflitos.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:.7;">Você ainda não registrou nenhum conflito.</td></tr>`;
+        return;
+      }
+
+      tbodyConflitos.innerHTML = '';
+      data.forEach(c=>{
+        const dt = c.criado_em ? new Date(c.criado_em).toLocaleString('pt-BR') : '—';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHTML(c.titulo || 'Conflito sem título')}</td>
+          <td>${statusToTag(c.status)}</td>
+          <td>${dt}</td>
+          <td style="text-align:right;">
+            <button class="btn" onclick="abrirDetalhe('${c.id}')">Ver detalhes</button>
+          </td>
+        `;
+        tbodyConflitos.appendChild(tr);
+      });
+    }
+
+    function abrirDetalhe(id){
+      if(!id) return;
+      window.location.href = `andamento-detalhe.html?id=${encodeURIComponent(id)}`;
+    }
+    window.abrirDetalhe = abrirDetalhe;
+
+    sairBtn?.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      await db.auth.signOut();
+      localStorage.removeItem('usuario');
+      window.location.href = 'index.html';
+    });
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+  </script>
+</body>
+</html>

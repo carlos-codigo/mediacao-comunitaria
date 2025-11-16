@@ -1,0 +1,214 @@
+/* ===========================================================
+   🎛️  ADMIN DASHBOARD — DESKTOP
+   Tema: Futurista Neon / Painel Administrativo
+   =========================================================== */
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0b1220, #0f172a);
+  color: #e5e7eb;
+  overflow: hidden;
+}
+
+/* LAYOUT ROOT */
+.admin-shell {
+  display: flex;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===========================================================
+   SIDEBAR
+   =========================================================== */
+.admin-sidebar {
+  width: 300px;
+  min-width: 260px;
+  background: linear-gradient(180deg, #0f172f, #0a0f25 60%, #070c18 100%);
+  border-right: 1px solid #1c2944;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0,0,0,.45);
+}
+
+.admin-sidebar .brand {
+  padding: 26px 22px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border-bottom: 1px solid #1c2944;
+}
+
+.admin-sidebar .brand img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 10px rgba(59,130,246,.45));
+}
+
+.admin-sidebar .brand h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  gap: 10px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #cfe2ff;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #0f1732, #0c142a);
+  transition: .15s ease;
+}
+
+.nav a .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6;
+  opacity: .6;
+}
+
+.nav a:hover {
+  border-color: #264275;
+  transform: translateX(3px);
+  box-shadow: 0 0 18px rgba(59,130,246,.25);
+}
+
+.nav a.active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 18px rgba(59,130,246,.45);
+  background: linear-gradient(180deg, #1d2c52, #162544);
+}
+
+/* Logout item */
+.nav a.logout {
+  margin-top: 10px;
+  background: linear-gradient(180deg, #3b1f1f, #2b1414);
+  border-color: #7f3636;
+}
+.nav a.logout:hover { filter: brightness(1.15); }
+
+/* ===========================================================
+   CONTEÚDO / MAIN
+   =========================================================== */
+.admin-content {
+  flex: 1;
+  padding: 26px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* HEADER */
+.admin-content .header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-content .header h2 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.admin-content .header .crumbs {
+  color: #9aa7bd;
+  font-size: 13px;
+}
+
+/* KPI CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid #1f2a44;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: .15s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 50px rgba(0,0,0,.45);
+}
+
+.card .title {
+  font-size: 14px;
+  color: #9aa7bd;
+  font-weight: 600;
+}
+
+.card .value {
+  font-size: 34px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255,255,255,.2);
+}
+
+.card .hint {
+  font-size: 13px;
+  opacity: .7;
+}
+
+/* BOTÕES */
+.btn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(100deg, #3b82f6, #6366f1, #22c55e);
+  box-shadow: 0 10px 20px rgba(59,130,246,.25), 0 6px 12px rgba(34,197,94,.18);
+  transition: .15s;
+}
+
+.btn:hover { transform: scale(1.04); }
+
+.btn.secondary {
+  background: linear-gradient(100deg, #64748b, #475569);
+}
+
+/* CARD DE ATALHOS */
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+

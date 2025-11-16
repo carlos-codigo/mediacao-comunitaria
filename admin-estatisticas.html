@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Estatísticas</title>
+
+  <!-- FONTES -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-mobile.css"  media="(max-width: 800px)">
+
+  <!-- CSS ESPECÍFICO DA PÁGINA -->
+  <link rel="stylesheet" href="css/admin-estatisticas-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-estatisticas-mobile.css"  media="(max-width: 800px)">
+</head>
+
+<body>
+
+<div class="admin-shell">
+
+  <!-- SIDEBAR PADRÃO -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <h1>MediAção • Admin</h1>
+    </div>
+
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html"><span class="dot"></span> 🗂 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html" class="active"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- MOBILE TOPBAR -->
+  <div class="topbar-mobile">
+    <button id="toggleMenu">☰</button>
+    <span>Estatísticas</span>
+    <span class="dots">⋯</span>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+
+    <div class="header">
+      <h2>Estatísticas Gerais</h2>
+      <div class="crumbs">Admin &rsaquo; Estatísticas</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h3 class="title">Conflitos por Status</h3>
+        <canvas id="chartStatus"></canvas>
+        <div class="muted" id="statusInfo">Carregando…</div>
+      </section>
+
+      <section class="card">
+        <h3 class="title">Conflitos por Mês (12 meses)</h3>
+        <canvas id="chartMensal"></canvas>
+        <div class="muted" id="mensalInfo">Carregando…</div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h3 class="title">Usuários criados por mês</h3>
+        <canvas id="chartUsuarios"></canvas>
+        <div class="muted" id="usuariosInfo">Carregando…</div>
+      </section>
+    </div>
+
+  </main>
+
+  <div id="menu-overlay"></div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  /* === SEU MESMO SCRIPT ORIGINAL === */
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const statusInfo  = document.getElementById("statusInfo");
+  const mensalInfo  = document.getElementById("mensalInfo");
+  const usuariosInfo = document.getElementById("usuariosInfo");
+
+  init();
+  async function init(){
+    const { data:{ user } } = await db.auth.getUser();
+    if(!user){ location.href="admin.html"; return; }
+
+    const { data:perfil } = await db.from("usuarios").select("is_admin").eq("id", user.id).maybeSingle();
+    if(!perfil?.is_admin){ location.href="index.html"; return; }
+
+    await carregarGraficos();
+  }
+
+  function last12MonthsLabels(){
+    const arr=[]; const now=new Date();
+    for(let i=11;i>=0;i--){
+      const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+      arr.push(d.toLocaleDateString("pt-BR",{month:"short",year:"2-digit"}));
+    }
+    return arr;
+  }
+
+  function monthKey(d){
+    const dt=new Date(d);
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}`;
+  }
+
+  function initMonthMap(){
+    const map={}; const now=new Date();
+    for(let i=11;i>=0;i--){
+      const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+      map[monthKey(d)] = 0;
+    }
+    return map;
+  }
+
+  async function carregarGraficos(){
+    // CONFLITOS
+    const { data:confs } = await db.from("conflitos").select("status,criado_em");
+
+    const analise   = confs.filter(c=>c.status==="Em análise").length;
+    const andamento = confs.filter(c=>c.status==="Em andamento").length;
+    const resolvido = confs.filter(c=>c.status==="Resolvido").length;
+
+    new Chart(document.getElementById("chartStatus"),{
+      type:"pie",
+      data:{ labels:["Em análise","Em andamento","Resolvido"], datasets:[{ data:[analise,andamento,resolvido] }] },
+      options:{ plugins:{ legend:{ labels:{ color:"#e5e7eb" }}}}
+    });
+
+    statusInfo.textContent = `Total: ${confs.length}`;
+
+    // CONFLITOS POR MÊS
+    const map = initMonthMap();
+    confs.forEach(c=>{
+      if(map[monthKey(c.criado_em)] !== undefined)
+        map[monthKey(c.criado_em)]++;
+    });
+
+    const labels = last12MonthsLabels();
+    const vals   = Object.values(map);
+
+    new Chart(document.getElementById("chartMensal"),{
+      type:"bar",
+      data:{ labels, datasets:[{ label:"Conflitos", data:vals }] },
+      options:{
+        scales:{
+          x:{ ticks:{ color:"#e5e7eb" }},
+          y:{ ticks:{ color:"#e5e7eb" }}
+        }
+      }
+    });
+
+   // ====== USUÁRIOS CRIADOS POR MÊS (SEGURO, SEM ERROS 400) ======
+let users = [];
+try {
+  const r = await db.from("usuarios").select("*");  // pega tudo
+  users = r.data || [];
+} catch(e) {
+  users = [];
+}
+
+const mapU = initMonthMap();
+
+users.forEach(u => {
+  const dt = u.created_at || u.criado_em || u.data_criacao || u.data || null;
+
+  if (dt) {
+    const k = monthKey(dt);
+    if (mapU[k] !== undefined) {
+      mapU[k]++;
+    }
+  }
+  
+});
+
+const valsU = Object.values(mapU);
+
+new Chart(document.getElementById("chartUsuarios").getContext("2d"), {
+  type: "line",
+  data: {
+    labels,
+    datasets: [{
+      label: "Usuários",
+      data: valsU,
+      borderColor: "#3b82f6",
+      backgroundColor: "#3b82f688"
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { color: "#e5e7eb" } } },
+    scales: {
+      x: { ticks: { color: "#e5e7eb" } },
+      y: { ticks: { color: "#e5e7eb" } }
+    }
+  }
+});
+
+usuariosInfo.textContent =
+  "Contagem de usuários (tabela 'usuarios') por mês (últimos 12).";
+
+
+  }
+
+  // LOGOUT
+  document.getElementById("logout").addEventListener("click", async(e)=>{
+    e.preventDefault();
+    await db.auth.signOut();
+    location.href="index.html";
+  });
+
+  // MENU MOBILE
+  const side = document.getElementById("sidebar");
+  const btn  = document.getElementById("toggleMenu");
+  const overlay = document.getElementById("menu-overlay");
+
+  btn.addEventListener("click",()=>{
+    side.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click",()=>{
+    side.classList.remove("open");
+    overlay.classList.remove("show");
+    
+  });
+</script>
+
+</body>
+</html>

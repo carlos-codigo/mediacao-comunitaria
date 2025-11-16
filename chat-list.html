@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suas Mediações — Chat</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Global -->
+  <link rel="stylesheet" href="css/global-mobile.css" media="(max-width: 800px)">
+
+  <!-- Chat mobile -->
+  <link rel="stylesheet" href="css/chat-mobile.css" media="(max-width: 800px)">
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="layout">
+  <!-- Sidebar mobile (off-canvas) -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <div>
+        <div style="font-weight:700">Mediação Comunitária</div>
+        <small>Área do Usuário</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="nav-link" href="home.html">🏠 Início</a>
+      <a class="nav-link" href="conflito.html">📝 Registrar Conflito</a>
+      <a class="nav-link" href="andamento.html">📂 Meus Conflitos</a>
+      <a class="nav-link" href="dados.html">👤 Meus Dados</a>
+      <a class="nav-link active" href="chat.html">📨 Suporte / Chat</a>
+      <a class="nav-link" href="#" id="btnSair">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <header class="chat-mobile-header">
+      <button class="back" style="visibility:hidden">←</button>
+      <div class="hgroup">
+        <div class="title">Suas Mediações</div>
+        <small class="sub" id="whoami">Conectando…</small>
+      </div>
+      <button class="toggle" id="toggleMenu">☰</button>
+    </header>
+
+    <section class="conf-list-mobile" id="confList">
+      <div class="conf-sub">Carregando suas mediações…</div>
+    </section>
+  </main>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Partículas
+  (function particles(){
+    const wrap = document.getElementById("particles");
+    for(let i=0;i<90;i++){
+      const d=document.createElement("div");
+      d.className="dot";
+      d.style.left=Math.random()*100+"vw";
+      d.style.top=Math.random()*100+"vh";
+      d.style.animationDelay=Math.random()*10+"s";
+      wrap.appendChild(d);
+    }
+  })();
+
+  // Menu mobile
+  const sidebarMobile = document.getElementById("sidebar");
+  const toggleMobile = document.getElementById("toggleMenu");
+  let overlay = document.getElementById("menu-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menu-overlay";
+    document.body.appendChild(overlay);
+  }
+  toggleMobile?.addEventListener("click", () => {
+    sidebarMobile.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+  overlay?.addEventListener("click", () => {
+    sidebarMobile.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  // Supabase
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const whoami  = document.getElementById("whoami");
+  const confList= document.getElementById("confList");
+
+  init();
+  async function init(){
+    const { data } = await db.auth.getUser();
+    if(!data?.user){ location.href="index.html"; return; }
+    const user = data.user;
+    whoami.textContent = user.user_metadata?.nome || user.email || "Você";
+
+    const { data: rows, error } = await db
+      .from("conflitos")
+      .select("*")
+      .eq("usuario_id", user.id)
+      .order("criado_em", { ascending:false });
+
+    if(error){
+      confList.innerHTML = `<div class="conf-sub">Erro: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if(!rows || !rows.length){
+      confList.innerHTML = `<div class="conf-sub">Você ainda não possui mediações. Registre uma em “Registrar Conflito”.</div>`;
+      return;
+    }
+
+    confList.innerHTML = "";
+    rows.forEach(c=>{
+      const el = document.createElement("button");
+      el.className = "conf-item";
+      el.innerHTML = `
+        <div class="conf-title">${escapeHtml(c.titulo || "Mediação")}</div>
+        <div class="conf-sub">${escapeHtml(c.envolvidos || "-")} · ${escapeHtml(c.status || "Em análise")}</div>
+      `;
+      el.addEventListener("click", ()=>{
+        location.href = "chat.html?id=" + encodeURIComponent(c.id);
+      });
+      confList.appendChild(el);
+    });
+  }
+
+  document.getElementById("btnSair")?.addEventListener("click", async()=>{
+    await db.auth.signOut(); location.href="index.html";
+  });
+
+  function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mediação Comunitária — Home</title>
+
+  <!-- ✅ Fonte principal -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ CSS GLOBAL (DESKTOP) -->
+  <link rel="stylesheet" href="css/global-dasktop.css" media="(min-width: 801px)">
+
+  <!-- ✅ CSS GLOBAL (MOBILE) -->
+  <link rel="stylesheet" href="css/global-mobile.css" media="(max-width: 800px)">
+
+  <!-- ✅ CSS HOME (DESKTOP) -->
+  <link rel="stylesheet" href="css/home-dasktop.css" media="(min-width: 801px)">
+
+  <!-- ✅ CSS HOME (MOBILE) -->
+  <link rel="stylesheet" href="css/home-mobile.css" media="(max-width: 800px)">
+</head>
+
+<body>
+
+  <!-- ✅ PARTÍCULAS DE FUNDO (mantidas em desktop e mobile) -->
+  <div class="particles" id="particles"></div>
+
+  <div class="layout">
+
+    <!-- ✅ SIDEBAR (desktop fixa / mobile oculta com overlay) -->
+    <aside id="sidebar">
+      <div class="brand">
+        <img src="assets/imagens/logo2.png" alt="Logo" />
+        <div>
+          <h1>Mediação Comunitária</h1>
+          <small>Área do Usuário</small>
+        </div>
+      </div>
+
+      <!-- ✅ Navegação -->
+      <nav>
+        <a class="nav-link active" href="home.html"><span class="ico">🏠</span> Início</a>
+        <a class="nav-link" href="conflito.html"><span class="ico">📝</span> Registrar Conflito</a>
+        <a class="nav-link" href="andamento.html"><span class="ico">📂</span> Meus Conflitos</a>
+        <a class="nav-link" href="dados.html"><span class="ico">👤</span> Meus Dados</a>
+        <a class="nav-link" href="chat.html"><span class="ico">📨</span> Suporte / Chat</a>
+        <a class="nav-link" href="#" id="sairBtn"><span class="ico">🚪</span> Sair</a>
+      </nav>
+
+      <!-- ✅ Rodapé da sidebar -->
+      <div class="sidebar-footer">
+        <div id="whoami">Conectando…</div>
+      </div>
+    </aside>
+
+    <!-- ✅ ÁREA PRINCIPAL -->
+    <main>
+
+      <!-- ✅ ÁREA SUPERIOR (Header) -->
+      <header class="top">
+        <div class="hello">
+
+          <!-- ✅ BOTÃO DO MENU (só aparece no mobile via CSS) -->
+          <button class="toggle" id="toggleMenu">☰ Menu</button>
+
+          <h2>Bem-vindo 👋</h2>
+          <small id="welcomeLine">Carregando seus dados…</small>
+        </div>
+
+        <!-- ✅ Ações rápidas -->
+        <div class="quick-actions">
+          <button class="btn" onclick="location.href='conflito.html'">+ Novo Conflito</button>
+          <button class="btn" onclick="location.href='andamento.html'">Ver Andamento</button>
+        </div>
+      </header>
+
+      <!-- ✅ CONTEÚDO PRINCIPAL -->
+      <section class="content">
+
+        <!-- ✅ KPIs / Indicadores -->
+        <div class="card kpi">
+          <h3>Conflitos abertos (você)</h3>
+          <div class="val" id="kpiTotal">—</div>
+          <div class="hint">Todos os seus registros</div>
+        </div>
+
+        <div class="card kpi">
+          <h3>Em análise</h3>
+          <div class="val" id="kpiAnalise">—</div>
+          <div class="hint">Aguardando avaliação inicial</div>
+        </div>
+
+        <div class="card kpi">
+          <h3>Em andamento</h3>
+          <div class="val" id="kpiAndamento">—</div>
+          <div class="hint">Mediação em curso</div>
+        </div>
+
+        <div class="card kpi">
+          <h3>Resolvidos</h3>
+          <div class="val" id="kpiResolvidos">—</div>
+          <div class="hint">Casos finalizados</div>
+        </div>
+
+        <!-- ✅ Últimos conflitos -->
+        <div class="card wide">
+          <h3 style="margin-bottom:8px;">Seus últimos conflitos</h3>
+          <div class="list" id="ultimos">
+            <div class="item"><span>Carregando…</span></div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- ✅ SDK DO SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- ✅ SCRIPT PRINCIPAL (Auth + KPIs + Dados do usuário) -->
+  <script>
+    // ========= SUPABASE =========
+    const SUPABASE_URL = "https://dtriltzrvdhnlxqbiced.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // ========= ELEMENTOS DA INTERFACE =========
+    const sidebar = document.getElementById('sidebar');
+    const toggleMenu = document.getElementById('toggleMenu');
+    const sairBtn = document.getElementById('sairBtn');
+    const whoami = document.getElementById('whoami');
+    const welcomeLine = document.getElementById('welcomeLine');
+
+    const kpiTotal = document.getElementById('kpiTotal');
+    const kpiAnalise = document.getElementById('kpiAnalise');
+    const kpiAndamento = document.getElementById('kpiAndamento');
+    const kpiResolvidos = document.getElementById('kpiResolvidos');
+    const ultimos = document.getElementById('ultimos');
+
+    // ========= PARTÍCULAS DE FUNDO =========
+    (function spawnParticles(){
+      const wrap = document.getElementById('particles');
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const N = Math.min(120, Math.floor((W*H)/18000));
+      for(let i=0;i<N;i++){
+        const d = document.createElement('div');
+        d.className = 'dot';
+        d.style.left = Math.random()*100 + 'vw';
+        d.style.top = (Math.random()*100) + 'vh';
+        d.style.animationDelay = (Math.random()*12)+'s';
+        d.style.opacity = (0.35 + Math.random()*0.65).toFixed(2);
+        d.style.transform = `translateY(${Math.random()*110}vh)`;
+        wrap.appendChild(d);
+      }
+    })();
+
+    // ========= INICIALIZAÇÃO =========
+    init().catch(console.error);
+
+    async function init(){
+      const { data: { user } } = await db.auth.getUser();
+      if(!user){ window.location.href = 'index.html'; return; }
+
+      const nome = user.user_metadata?.nome || user.email || 'Usuário';
+      whoami.textContent = `Logado como: ${nome}`;
+      welcomeLine.textContent = `Olá, ${nome}! Aqui está um resumo das suas mediações.`;
+
+      await Promise.all([
+        loadKpis(user.id),
+        loadUltimos(user.id),
+      ]);
+    }
+
+    async function countFor(userId, status){
+      let q = db.from('conflitos')
+                .select('id', { count: 'exact', head: true })
+                .eq('usuario_id', userId);
+      if(status) q = q.eq('status', status);
+      const { count, error } = await q;
+      return error ? 0 : (count || 0);
+    }
+
+    async function loadKpis(userId){
+      const [total, analise, andamento, resolvidos] = await Promise.all([
+        countFor(userId, null),
+        countFor(userId, 'Em análise'),
+        countFor(userId, 'Em andamento'),
+        countFor(userId, 'Resolvido'),
+      ]);
+      kpiTotal.textContent = total;
+      kpiAnalise.textContent = analise;
+      kpiAndamento.textContent = andamento;
+      kpiResolvidos.textContent = resolvidos;
+    }
+
+    async function loadUltimos(userId){
+      let orderCol = 'criado_em';
+      let { data, error } = await db.from('conflitos')
+        .select('*')
+        .eq('usuario_id', userId)
+        .order(orderCol, { ascending:false })
+        .limit(5);
+
+      if(error){
+        orderCol = 'created_at';
+        ({ data, error } = await db.from('conflitos')
+          .select('*')
+          .eq('usuario_id', userId)
+          .order(orderCol, { ascending:false })
+          .limit(5));
+      }
+
+      ultimos.innerHTML = '';
+      if(error || !data || !data.length){
+        ultimos.innerHTML = `<div class="item"><span>Nenhum conflito encontrado.</span></div>`;
+        return;
+      }
+
+      data.forEach(c=>{
+        const status = (c.status || 'Em análise');
+        const tagClass =
+          status === 'Resolvido' ? 'ok' :
+          (status.includes('andamento') || status.includes('Andamento')) ? 'prog' : 'wait';
+        const quando = (c[orderCol] ? new Date(c[orderCol]) : null);
+        const dt = quando ? quando.toLocaleString('pt-BR') : '—';
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:600">${escapeHTML(c.titulo || 'Conflito sem título')}</div>
+            <small style="color:var(--muted)">Atualizado: ${dt}</small>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="tag ${tagClass}">${escapeHTML(status)}</span>
+            <button class="btn" style="padding:8px 10px; border-radius:10px;"
+              onclick="location.href='andamento.html?id=${encodeURIComponent(c.id)}'">Abrir</button>
+          </div>
+        `;
+        ultimos.appendChild(div);
+      });
+    }
+
+    // ========= Logout =========
+    sairBtn?.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      await db.auth.signOut();
+      localStorage.removeItem('usuario');
+      window.location.href = 'index.html';
+    });
+
+    // ========= Segurança (evita XSS) =========
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+  </script>
+
+  <!-- ✅ SCRIPT DO MENU MOBILE + OVERLAY (NÃO REMOVER) -->
+  <script>
+    const sidebarMobile = document.getElementById("sidebar");
+    const toggleMobile = document.getElementById("toggleMenu");
+
+    // cria overlay se não existir
+    let overlay = document.getElementById("menu-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "menu-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    // abre/fecha menu
+    toggleMobile?.addEventListener("click", () => {
+      sidebarMobile.classList.toggle("open");
+      overlay.classList.toggle("show");
+    });
+
+    // fecha ao clicar fora
+    overlay?.addEventListener("click", () => {
+      sidebarMobile.classList.remove("open");
+      overlay.classList.remove("show");
+    });
+  </script>
+
+</body>
+</html>

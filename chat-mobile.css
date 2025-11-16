@@ -1,0 +1,97 @@
+/* ===========================================================
+   💬 CHAT — MOBILE (≤ 800px)
+   Opção B: Fluxo em 2 telas (lista → chat), header e composer FIXOS
+   Partículas ativas. Visual igual ao restante do sistema.
+   =========================================================== */
+
+@media (max-width: 800px){
+
+  /* Header fixo (lista e chat) */
+  .chat-mobile-header{
+    position: sticky; top: 0; z-index: 5;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:12px 14px;
+    background: linear-gradient(180deg, #0e1630ee, #0a1228f0);
+    border-bottom:1px solid #1f2a44; backdrop-filter: blur(10px);
+  }
+  .chat-mobile-header .hgroup{ display:flex; flex-direction:column; min-width:0; }
+  .chat-mobile-header .title{ font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:62vw; }
+  .chat-mobile-header .sub{ color:#9aa7bd; font-size:12px; }
+
+  .chat-mobile-header .back{
+    border:1px solid #2a3f6b; background:#0e1730; color:#cfe2ff;
+    border-radius:10px; padding:8px 10px; min-width:46px; cursor:pointer;
+  }
+  .chat-mobile-header .toggle{
+    border:1px solid #2a3f6b; background:#0e1730; color:#cfe2ff;
+    border-radius:10px; padding:8px 10px; min-width:46px; cursor:pointer;
+  }
+
+  /* Lista mobile (chat-list.html) */
+  .conf-list-mobile{
+    padding:14px; display:flex; flex-direction:column; gap:10px;
+  }
+  .conf-item{
+    width:100%; text-align:left;
+    border:1px solid #223356; border-radius:14px; padding:12px 14px; cursor:pointer;
+    background: linear-gradient(180deg,#0f1732,#0c142a);
+    transition:.15s; color:#e5e7eb;
+  }
+  .conf-item:hover{ transform: translateY(-1px); border-color:#2a4777 }
+  .conf-title{ font-weight:700; font-size:14px }
+  .conf-sub{ color:#9aa7bd; font-size:12px }
+
+  /* Painel do chat (chat.html?id=) */
+  .shell{ display:block; height:auto; }
+  .chat-panel{
+    display:flex; flex-direction:column; min-height:calc(100vh - 64px);
+    padding:10px 12px 12px 12px; gap:12px;
+  }
+
+  /* Esconde elementos exclusivos do desktop */
+  .topbar-desktop, .chat-header-desktop, .conf-list { display:none !important; }
+
+  .chat-body{
+    flex:1; overflow:auto; padding:12px;
+    background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
+    border:1px solid #1f2a44; border-radius:18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.35); backdrop-filter:blur(8px);
+    display:flex; flex-direction:column; gap:10px; min-height:0;
+  }
+
+  .msg{
+    max-width:92%;
+    padding:11px 13px; border-radius:14px; position:relative;
+    word-wrap:break-word; white-space:pre-wrap; border:1px solid #234;
+    box-shadow: 0 8px 18px rgba(0,0,0,.25); font-size:14px;
+  }
+  .from-user{ align-self:flex-end; background:linear-gradient(100deg,#1b2546,#243260); border-color:#345; }
+  .from-admin{ align-self:flex-start; background:linear-gradient(100deg,#15351f,#193826); border-color:#355a45; }
+
+  .meta{ font-size:11px; color:#cbd5e1; opacity:.9; margin:0 6px 2px 6px; }
+  .meta.right{ text-align:right }
+  .meta.left{ text-align:left }
+
+  /* Composer FIXO no rodapé */
+  .composer{
+    position: sticky; bottom: 6px; z-index: 5;
+    display:flex; gap:10px; margin-top:0;
+    background:rgba(12,18,36,.92); border:1px solid #1f2a44;
+    border-radius:999px; padding:8px; align-items:center;
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    backdrop-filter: blur(8px);
+  }
+  .composer textarea{
+    flex:1; resize:none; height:44px; border:none; outline:none;
+    background:transparent; color:white; font-family:inherit; font-size:14px;
+    padding:6px 10px;
+  }
+  .send{
+    min-width:44px; height:44px; border-radius:50%;
+    border:none; cursor:pointer; font-weight:700; color:white;
+    background: linear-gradient(100deg, var(--accent, #3b82f6), #6366f1, var(--accent-2, #22c55e));
+    box-shadow: 0 10px 20px rgba(59,130,246,.25);
+    transition:.15s;
+  }
+  .send:hover{ transform:translateY(-1px) }
+}

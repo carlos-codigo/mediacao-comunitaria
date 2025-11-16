@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mediação Comunitária</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg1:#0f172a;--bg2:#1e293b;
+      --accent:#3b82f6;--accent-2:#22c55e;
+      --text:#e5e7eb;--muted:#94a3b8;
+      --card:#0b1220cc;--shadow:0 20px 40px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, #2563eb33 0%, transparent 60%),
+        radial-gradient(1200px 600px at 110% 10%, #22c55e33 0%, transparent 60%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* ======= ANIMAÇÕES ======= */
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeSlide .6s ease;
+    }
+
+    /* ======= MENU LATERAL ======= */
+    #menuLateral {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      transition: left 0.3s ease;
+      z-index: 1000;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    #menuLateral.ativo { left: 0; }
+
+    .menu-header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #334155;
+    }
+    .menu-header h2 { color: #22c55e; font-size: 1.2rem; margin-top: 5px; }
+    .logo-menu { width: 80px; height: auto; margin-bottom: 5px; }
+
+    #menuLateral ul {
+      list-style: none;
+      padding: 20px;
+      flex: 1;
+    }
+    #menuLateral ul li { margin-bottom: 15px; }
+    #menuLateral ul li a {
+      text-decoration: none;
+      color: #e2e8f0;
+      font-size: 1rem;
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    #menuLateral ul li a:hover { background: rgba(255,255,255,0.1); }
+
+    /* ======= BOTÃO HAMBÚRGUER ======= */
+    .hamburguer {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 32px;
+      height: 26px;
+      cursor: pointer;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hamburguer div {
+      background: #000;
+      height: 4px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(2) { opacity: 0; }
+    #menuLateral.ativo ~ .hamburguer div:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ======= CONTEÚDO ======= */
+    #conteudo {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+    }
+
+    footer {
+      text-align:center;
+      color:var(--muted);
+      font-size:.8rem;
+      padding:1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- MENU LATERAL -->
+  <nav id="menuLateral">
+    <div class="menu-header">
+      <img src="assets/logo2.png" alt="Logo" class="logo-menu" />
+      <h2>Mediação</h2>
+    </div>
+    <ul>
+      <li><a href="#" data-page="dashboard">🏠 Início</a></li>
+      <li><a href="#" data-page="conflito">📝 Descrever Conflito</a></li>
+      <li><a href="#" data-page="andamento">📊 Andamento</a></li>
+      <li><a href="#" data-page="dados">👤 Meus Dados</a></li>
+      <li id="sair"><a href="#">🚪 Sair</a></li>
+    </ul>
+  </nav>
+
+  <!-- BOTÃO HAMBÚRGUER -->
+  <div id="hamburguer" class="hamburguer">
+    <div></div><div></div><div></div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div id="conteudo" class="fade-in">
+    <!-- O conteúdo das páginas será carregado aqui -->
+  </div>
+
+  <footer>© 2025 Mediação Comunitária. Todos os direitos reservados.</footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+    const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const menu = document.getElementById("menuLateral");
+    const btn = document.getElementById("hamburguer");
+    const sair = document.getElementById("sair");
+    const conteudo = document.getElementById("conteudo");
+
+    btn.addEventListener("click", () => menu.classList.toggle("ativo"));
+    menu.querySelectorAll("a[data-page]").forEach(link => {
+      link.addEventListener("click", async e => {
+        e.preventDefault();
+        const page = e.target.getAttribute("data-page");
+        menu.classList.remove("ativo");
+        await carregarPagina(page);
+      });
+    });
+
+    sair.addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      localStorage.removeItem("usuario");
+      alert("Você saiu da conta.");
+      window.location.href = "index.html";
+    });
+
+    // === Função para carregar páginas dinamicamente ===
+    async function carregarPagina(pagina) {
+      const resp = await fetch(`pages/${pagina}.html`);
+      const html = await resp.text();
+      conteudo.innerHTML = html;
+      conteudo.classList.remove("fade-in");
+      void conteudo.offsetWidth;
+      conteudo.classList.add("fade-in");
+    }
+
+    // === Carrega a tela inicial (Dashboard) ===
+    carregarPagina("dashboard");
+  </script>
+</body>
+</html>

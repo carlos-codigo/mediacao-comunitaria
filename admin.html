@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login Administrativo — Mediação Comunitária</title>
+
+  <!-- CSS Responsivo -->
+  <link rel="stylesheet" href="css/admin-login-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-login-mobile.css" media="(max-width: 800px)">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<main class="page">
+
+  <!-- LOGO -->
+  <div class="logo-wrap">
+    <img src="assets/imagens/logo2.png" alt="Logo Mediação" class="logo" />
+  </div>
+
+  <!-- CARD ADMIN -->
+  <div class="card">
+    <h2>Login Administrativo</h2>
+    <p class="legend">Acesso exclusivo para administradores</p>
+
+    <div class="field">
+      <label for="adminEmail">E-mail</label>
+      <div class="input"><input type="email" id="adminEmail" placeholder="admin@email.com" /></div>
+    </div>
+
+    <div class="field">
+      <label for="adminPassword">Senha</label>
+      <div class="input"><input type="password" id="adminPassword" placeholder="••••••••" /></div>
+    </div>
+
+    <button class="btn" id="loginAdminBtn">Entrar</button>
+    <button class="back-btn" id="voltarBtn">← Voltar</button>
+
+    <p id="msgAdmin" class="msg-erro"></p>
+  </div>
+
+</main>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+  const db = supabase.createClient(supabaseUrl, supabaseKey);
+
+  const msg = document.getElementById("msgAdmin");
+
+  document.getElementById("loginAdminBtn").addEventListener("click", async () => {
+    msg.textContent = "";
+    const email = adminEmail.value.trim();
+    const password = adminPassword.value.trim();
+
+    if (!email || !password) {
+      msg.textContent = "Preencha todos os campos.";
+      return;
+    }
+
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      msg.textContent = "Erro ao entrar: " + error.message;
+      return;
+    }
+
+    const { data: perfil } = await db
+      .from("usuarios")
+      .select("is_admin")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    if (perfil?.is_admin) {
+      window.location.href = "admin-dashboard.html";
+    } else {
+      msg.style.color = "#f87171";
+      msg.textContent = "Esta conta não é de administrador.";
+      await db.auth.signOut();
+    }
+  });
+
+  document.getElementById("voltarBtn").addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+</script>
+
+</body>
+</html>

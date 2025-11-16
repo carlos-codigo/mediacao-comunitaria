@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Criar Conta - Mediação Comunitária</title>
+
+  <!-- CSS Responsivo -->
+  <link rel="stylesheet" href="css/cadastro-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/cadastro-mobile.css" media="(max-width: 800px)">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<main class="page">
+
+  <!-- LOGO -->
+  <div class="logo-wrap">
+    <img src="assets/imagens/logo2.png" alt="Logo Mediação" class="logo" />
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+    <h2>Criar Conta</h2>
+    <p class="legend">Preencha os dados para se registrar</p>
+
+    <div class="field">
+      <label for="nome">Nome completo</label>
+      <div class="input"><input type="text" id="nome" placeholder="Seu nome" /></div>
+    </div>
+
+    <div class="field">
+      <label for="emailCadastro">E-mail</label>
+      <div class="input"><input type="email" id="emailCadastro" placeholder="seu@email.com" /></div>
+    </div>
+
+    <div class="field">
+      <label for="senhaCadastro">Senha</label>
+      <div class="input"><input type="password" id="senhaCadastro" placeholder="••••••••" /></div>
+    </div>
+
+    <div class="field">
+      <label for="senhaConfirmar">Confirmar senha</label>
+      <div class="input"><input type="password" id="senhaConfirmar" placeholder="••••••••" /></div>
+    </div>
+
+    <button class="btn" id="btnCriarConta">Criar conta</button>
+
+    <div class="register">Já tem conta? <a href="index.html">Entrar</a></div>
+
+    <p id="msgCadastro" class="msg-erro"></p>
+  </div>
+
+</main>
+
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  const msg = document.getElementById("msgCadastro");
+
+  document.getElementById("btnCriarConta").addEventListener("click", async () => {
+    msg.textContent = "";
+
+    const nome = document.getElementById("nome").value.trim();
+    const email = document.getElementById("emailCadastro").value.trim();
+    const senha = document.getElementById("senhaCadastro").value.trim();
+    const senha2 = document.getElementById("senhaConfirmar").value.trim();
+
+    if (!nome || !email || !senha || !senha2) {
+      msg.textContent = "Preencha todos os campos.";
+      return;
+    }
+
+    if (senha !== senha2) {
+      msg.textContent = "As senhas não coincidem.";
+      return;
+    }
+
+    const { data, error } = await supabaseClient.auth.signUp({ email, password: senha });
+
+    if (error) {
+      msg.textContent = "Erro ao criar conta: " + error.message;
+      return;
+    }
+
+    await supabaseClient.from("usuarios").insert({
+      id: data.user.id,
+      nome,
+      email,
+      is_admin: false
+    });
+
+    msg.style.color = "#22c55e";
+    msg.textContent = "Conta criada com sucesso! Redirecionando...";
+    setTimeout(() => window.location.href = "index.html", 1500);
+  });
+</script>
+
+</body>
+</html>

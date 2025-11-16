@@ -1,0 +1,149 @@
+/* ===========================================================
+   🖥️ ADMIN — USUÁRIOS (DESKTOP ≥ 801px)
+   Arquivo: admin-usuarios-desktop.css
+   Usa o mesmo tema neon do admin-desktop.css
+   =========================================================== */
+
+@media (min-width: 801px) {
+
+  /* ✅ Ajuste de layout SÓ para esta página */
+  body.admin-usuarios .admin-shell {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr); /* sidebar + conteúdo */
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  body.admin-usuarios .admin-content {
+    /* garante que o conteúdo fique na coluna da direita e comece do topo */
+    grid-column: 2;
+
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+
+    min-height: 100vh;
+    height: auto;
+    overflow: visible; /* scroll fica na janela, não dentro do main */
+    margin-top: 0;
+  }
+
+  /* Sidebar mantida normal (se quiser, pode nem precisar disso aqui) */
+  body.admin-usuarios .admin-sidebar {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+
+  /* ==========================
+     Ajustes finos — FILTROS
+     ========================== */
+  .users-filters {
+    margin-bottom: 14px;
+  }
+
+  .users-filters .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .users-filters .input {
+    flex: 1;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: rgba(15,23,42,.85);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+
+  .users-filters .input::placeholder {
+    color: var(--muted);
+  }
+
+  .users-filters .btn {
+    white-space: nowrap;
+  }
+
+  /* ==========================
+     TABELA
+     ========================== */
+  .users-table-wrapper {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .users-table thead {
+    background: rgba(15,23,42,.96);
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(31,42,68,.9);
+  }
+
+  .users-table th {
+    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  .users-table tbody tr:hover {
+    background: rgba(15,23,42,.85);
+  }
+
+  .users-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* ==========================
+     TAG Admin / Não-admin
+     ========================== */
+  .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #0f172a;
+    color: #e5e7eb;
+    border: 1px solid #1f2937;
+  }
+
+  .tag-admin {
+    background: #14532d;
+    color: #bbf7d0;
+    border-color: #15803d;
+    box-shadow: 0 0 10px rgba(34,197,94,.4);
+  }
+
+  /* ==========================
+     Botão Tornar/Remover Admin
+     ========================== */
+  .users-table .btn.secondary {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 999px;
+    background: linear-gradient(120deg, #0ea5e9, #6366f1, #22d3ee);
+    box-shadow: 0 8px 16px rgba(56,189,248,.25);
+  }
+
+  .users-table .btn.secondary:hover {
+    transform: translateY(-1px);
+  }
+}

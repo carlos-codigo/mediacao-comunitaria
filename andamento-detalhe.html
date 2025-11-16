@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mediação Comunitária — Detalhes do Conflito</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ TODO O SEU CSS ORIGINAL PRESERVADO -->
+  <style>
+    :root{
+      --bg1:#0b1220; --bg2:#0f172a;
+      --surface:#0c1224e0;
+      --text:#e5e7eb; --muted:#9aa7bd;
+      --primary:#3b82f6; --secondary:#22c55e; --violet:#8b5cf6;
+      --glowA:#2563eb; --glowB:#22c55e; --glowC:#a855f7;
+      --card-border:#1f2a44;
+      --neon: 0 0 12px rgba(59,130,246,.45), 0 0 22px rgba(34,197,94,.35), 0 0 38px rgba(168,85,247,.28);
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",sans-serif;color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+        radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+        radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      min-height:100vh; overflow:hidden;
+    }
+
+    .particles{
+      position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+    }
+    .dot{
+      position:absolute; width:3px; height:3px; border-radius:50%;
+      background: radial-gradient(circle, #fff, #ffffff00 60%);
+      opacity:.8; filter: drop-shadow(0 0 8px #7dd3fc);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float{
+      from{ transform: translateY(110vh) }
+      to{ transform: translateY(-10vh) }
+    }
+
+    .layout{ display:flex; height:100vh; position:relative; z-index:1; }
+    aside{
+      width: 300px; min-width: 260px; background: linear-gradient(180deg, #0c1224ee, #0a1020f5);
+      border-right:1px solid var(--card-border); position:relative; box-shadow: var(--shadow);
+    }
+    .brand{
+      padding:22px 22px 12px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--card-border);
+    }
+    .brand img{ width:44px; height:44px; border-radius:12px; object-fit:contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+    .brand h1{ font-size:18px; letter-spacing:.3px }
+    .brand small{ color:var(--muted); display:block; font-size:12px; margin-top:2px }
+
+    nav{ padding:16px; display:flex; flex-direction:column; gap:10px; }
+    .nav-link{
+      display:flex; align-items:center; gap:12px;
+      padding:12px 14px; border:1px solid transparent; border-radius:14px;
+      color:#cfe2ff; text-decoration:none;
+      background: linear-gradient(180deg, #0f1732, #0c142a);
+      transition: .15s ease; position:relative; isolation:isolate;
+    }
+    .nav-link::before{
+      content:""; position:absolute; inset:-1px; border-radius:14px;
+      background: linear-gradient(120deg, #1e3a8a, #065f46, #4c1d95);
+      opacity:.18; filter: blur(12px); z-index:-1;
+    }
+    .nav-link:hover{
+      border-color:#264275; transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(30,64,175,.25), 0 4px 12px rgba(16,185,129,.12);
+    }
+    .nav-link span.ico{ font-size:18px; opacity:.9 }
+
+    .sidebar-footer{
+      margin-top:auto; padding:16px; border-top:1px solid var(--card-border); color:var(--muted); font-size:12px;
+    }
+
+    main{
+      flex:1; position:relative; z-index:1; display:flex; flex-direction:column; overflow:auto;
+    }
+    header.top{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:22px 26px; border-bottom:1px solid var(--card-border);
+      background: linear-gradient(180deg, #0e1630e6, #0a1228e6);
+      backdrop-filter: blur(10px);
+    }
+    .hello{
+      display:flex; flex-direction:column;
+    }
+    .hello h2{ font-size:20px; line-height:1.2 }
+    .hello small{ color:var(--muted) }
+
+    .content{
+      padding:28px; display:flex; flex-direction:column; gap:18px; max-width:900px;
+    }
+
+    .card{
+      background: var(--surface); border:1px solid var(--card-border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      padding:18px; backdrop-filter: blur(10px);
+      position:relative; overflow:hidden;
+    }
+    .card::after{
+      content:""; position:absolute; inset:-1px; border-radius:var(--radius);
+      background: radial-gradient(600px 140px at 10% -10%, #2563eb26 0%, transparent 60%),
+                  radial-gradient(600px 140px at 110% 110%, #22c55e1f 0%, transparent 60%);
+      pointer-events:none;
+    }
+
+    .label{ font-size:13px; color:var(--muted); margin-bottom:4px }
+    .value{ font-size:17px; font-weight:600; }
+
+    .tag{ font-size:12px; padding:4px 8px; border-radius:999px; letter-spacing:.3px; border:1px solid transparent; }
+    .tag.wait{ background:#a855f726; color:#e9d5ff; border-color:#a855f755 }
+    .tag.prog{ background:#3b82f626; color:#93c5fd; border-color:#3b82f655 }
+    .tag.ok{   background:#22c55e26; color:#86efac; border-color:#22c55e55 }
+
+    .btn{
+      border:none; cursor:pointer; font-weight:700; color:#fff;
+      padding:10px 14px; border-radius:12px; transition:.15s ease;
+      background: linear-gradient(100deg, var(--primary) 0%, #6366f1 35%, var(--secondary) 100%);
+      box-shadow: 0 10px 20px rgba(59,130,246,.25), 0 6px 12px rgba(34,197,94,.18);
+    }
+    .btn:hover{ transform: translateY(-1px) }
+
+    /* ====== COMPLEMENTO RESPONSIVO (mesma lógica das outras telas) ====== */
+    /* Botão de menu (oculto no desktop) */
+    .toggle{
+      display:none;
+      border:1px solid #2a3f6b; background:#0e1730; color:#cfe2ff;
+      box-shadow: var(--neon); border-radius:10px; padding:8px 10px; cursor:pointer;
+      margin-bottom:10px;
+    }
+
+    /* Overlay sem blur (transparente), só para capturar clique fora */
+    #menu-overlay{
+      position:fixed; inset:0; display:none; background:transparent; z-index:8;
+    }
+    #menu-overlay.show{ display:block; }
+
+    @media (max-width: 800px){
+      aside{ position:fixed; left:-100%; top:0; bottom:0; z-index:9; transition:left .2s ease; }
+      aside.open{ left:0; }
+      .toggle{ display:inline-flex; }
+      .content{ padding:18px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Partículas -->
+  <div class="particles" id="particles"></div>
+
+  <div class="layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside id="sidebar">
+      <div class="brand">
+        <img src="assets/imagens/logo2.png" alt="Logo" />
+        <div>
+          <h1>Mediação Comunitária</h1>
+          <small>Área do Usuário</small>
+        </div>
+      </div>
+
+      <nav>
+        <a class="nav-link" href="home.html"><span class="ico">🏠</span> Início</a>
+        <a class="nav-link" href="conflito.html"><span class="ico">📝</span> Registrar Conflito</a>
+        <a class="nav-link" href="andamento.html"><span class="ico">📂</span> Meus Conflitos</a>
+        <a class="nav-link" href="dados.html"><span class="ico">👤</span> Meus Dados</a>
+        <a class="nav-link" href="chat.html"><span class="ico">📨</span> Suporte / Chat</a>
+        <a class="nav-link" href="#" id="sairBtn"><span class="ico">🚪</span> Sair</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="whoami">Conectando…</div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+      <header class="top">
+        <div class="hello">
+          <button class="toggle" id="toggleMenu">☰ Menu</button>
+          <h2>Detalhes da Mediação</h2>
+          <small id="welcomeLine">Carregando informações…</small>
+        </div>
+      </header>
+
+      <section class="content" id="contentArea">
+        <div class="card"><div class="value">Carregando…</div></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ✅ Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL  = "https://dtriltzrvdhnlxqbiced.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const contentArea = document.getElementById('contentArea');
+    const sairBtn = document.getElementById('sairBtn');
+    const whoami = document.getElementById('whoami');
+    const welcomeLine = document.getElementById('welcomeLine');
+
+    /* ===== MENU MOBILE (sem blur) ===== */
+    const sidebarMobile = document.getElementById("sidebar");
+    const toggleMobile  = document.getElementById("toggleMenu");
+
+    let overlay = document.getElementById("menu-overlay");
+    if(!overlay){
+      overlay = document.createElement("div");
+      overlay.id = "menu-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    toggleMobile?.addEventListener("click", () => {
+      sidebarMobile.classList.toggle("open");
+      overlay.classList.toggle("show");
+    });
+
+    overlay?.addEventListener("click", () => {
+      sidebarMobile.classList.remove("open");
+      overlay.classList.remove("show");
+    });
+
+    /* ===== INÍCIO ===== */
+    init();
+
+    async function init(){
+      const { data: { user } } = await db.auth.getUser();
+      if(!user){ window.location.href = 'index.html'; return; }
+
+      const nome = user.user_metadata?.nome || user.email;
+      whoami.textContent = `Logado como: ${nome}`;
+
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if(!id){ renderError("ID inválido ou não informado."); return; }
+
+      welcomeLine.textContent = "Exibindo informações do conflito selecionado.";
+      loadDetalhes(id, user.id);
+    }
+
+    async function loadDetalhes(id, userId){
+      const { data, error } = await db.from('conflitos')
+        .select('*')
+        .eq('id', id)
+        .eq('usuario_id', userId)
+        .maybeSingle();
+
+      if(error || !data){
+        renderError("Conflito não encontrado ou não pertence à sua conta.");
+        return;
+      }
+
+      renderDetalhes(data);
+    }
+
+    function renderDetalhes(c){
+      const statusTag = statusToTag(c.status);
+      const criado = c.criado_em ? new Date(c.criado_em).toLocaleString('pt-BR') : "—";
+      const atualizado = c.updated_at ? new Date(c.updated_at).toLocaleString('pt-BR') : "—";
+
+      contentArea.innerHTML = `
+        <div class="card">
+          <div class="label">Título do Conflito</div>
+          <div class="value">${escapeHTML(c.titulo || "(sem título)")}</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Descrição</div>
+          <div class="value">${escapeHTML(c.descricao || "(sem descrição)")}</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Status Atual</div>
+          <div class="value">${statusTag}</div>
+          <div id="statusTimeline" style="margin-top:12px;font-size:14px;opacity:.8;"></div>
+        </div>
+
+        <div class="card">
+          <div class="label">Criado em</div>
+          <div class="value">${criado}</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Última Atualização</div>
+          <div class="value">${atualizado}</div>
+        </div>
+
+        <div class="card" style="text-align:right;">
+          <button class="btn" onclick="window.location.href='andamento.html'">← Voltar</button>
+        </div>
+      `;
+
+      renderTimeline(c.status);
+    }
+
+    // ✅ TIMELINE VISUAL (● ○ ○)
+    function renderTimeline(status){
+      const steps = ["Em análise", "Em andamento", "Resolvido"];
+      const currentIndex = steps.indexOf(status ?? "Em análise");
+
+      const html = steps.map((step, i) => {
+        const filled = i <= currentIndex ? "●" : "○";
+        return `${filled} ${step}`;
+      }).join("&nbsp;&nbsp;&nbsp;");
+
+      document.getElementById("statusTimeline").innerHTML = html;
+    }
+
+    function statusToTag(statusRaw){
+      const s = (statusRaw || "Em análise");
+      if(/resolvido/i.test(s)) return `<span class="tag ok">${escapeHTML(s)}</span>`;
+      if(/andamento/i.test(s)) return `<span class="tag prog">${escapeHTML(s)}</span>`;
+      return `<span class="tag wait">${escapeHTML(s)}</span>`;
+    }
+
+    function renderError(msg){
+      contentArea.innerHTML = `
+        <div class="card" style="border:1px solid #b91c1c;">
+          <div class="value" style="color:#fca5a5;">${msg}</div>
+          <div style="text-align:right;margin-top:12px;">
+            <button class="btn" onclick="window.location.href='andamento.html'">← Voltar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    sairBtn?.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      await db.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    // ✅ partículas mantidas
+    (function spawnParticles(){
+      const wrap = document.getElementById('particles');
+      const W = window.innerWidth, H = window.innerHeight;
+      const N = Math.min(120, Math.floor((W*H)/18000));
+      for(let i=0;i<N;i++){
+        const d = document.createElement('div');
+        d.className = 'dot';
+        d.style.left = Math.random()*100 + 'vw';
+        d.style.top = (Math.random()*100) + 'vh';
+        d.style.animationDelay = (Math.random()*12)+'s';
+        d.style.opacity = (0.35 + Math.random()*0.65).toFixed(2);
+        d.style.transform = `translateY(${Math.random()*110}vh)`;
+        wrap.appendChild(d);
+      }
+    })();
+  </script>
+</body>
+</html>

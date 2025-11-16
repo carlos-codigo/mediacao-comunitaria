@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meus Dados — Mediação Comunitária</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ CSS GLOBAL -->
+  <link rel="stylesheet" href="css/global-dasktop.css" media="(min-width:801px)">
+  <link rel="stylesheet" href="css/global-mobile.css" media="(max-width:800px)">
+
+  <!-- ✅ CSS DADOS -->
+  <link rel="stylesheet" href="css/dados-dasktop.css" media="(min-width:801px)">
+  <link rel="stylesheet" href="css/dados-mobile.css" media="(max-width:800px)">
+</head>
+
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="layout">
+
+  <!-- ✅ MENU / SIDEBAR -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" />
+      <div>
+        <h3>Mediação Comunitária</h3>
+        <small>Área do Usuário</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="nav-link" href="home.html">🏠 Início</a>
+      <a class="nav-link" href="conflito.html">📝 Registrar Conflito</a>
+      <a class="nav-link" href="andamento.html">📂 Meus Conflitos</a>
+      <a class="nav-link active" href="dados.html">👤 Meus Dados</a>
+      <a class="nav-link" href="chat.html">📨 Suporte / Chat</a>
+      <a class="nav-link" href="#" id="btnSair">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- ✅ CONTEÚDO -->
+  <main>
+
+    <!-- ✅ BOTÃO MENU (só no mobile) -->
+    <button class="toggle" id="toggleMenu">☰ Menu</button>
+
+    <div class="card">
+      <h2>Meus Dados</h2>
+      <p>Atualize suas informações pessoais quando necessário.</p>
+
+      <div class="field">
+        <label>Nome completo</label>
+        <input type="text" id="nome" placeholder="Seu nome" />
+      </div>
+
+      <div class="field">
+        <label>E-mail (não editável)</label>
+        <input type="email" id="email" disabled />
+      </div>
+
+      <button class="btn" id="btnSalvar">Salvar alterações</button>
+
+      <h3 style="margin-top:18px;">Alterar Senha</h3>
+
+      <div class="field">
+        <input type="password" id="novaSenha" placeholder="Nova senha" />
+      </div>
+
+      <button class="btn" id="btnSenha">Atualizar Senha</button>
+
+      <p class="msg" id="msg"></p>
+    </div>
+  </main>
+</div>
+
+<!-- ✅ Overlay do menu -->
+<div id="menu-overlay"></div>
+
+<!-- ✅ Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  /* === AUTH / FORM / UPDATE === */
+  const db = supabase.createClient(
+    "https://dtriltzrvdhnlxqbiced.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+  );
+
+  const nomeEl = document.getElementById("nome");
+  const emailEl = document.getElementById("email");
+  const novaSenhaEl = document.getElementById("novaSenha");
+  const msg = document.getElementById("msg");
+  let user = null;
+
+  init();
+  async function init(){
+    const { data } = await db.auth.getUser();
+    if(!data?.user){ location.href="index.html"; return; }
+    user = data.user;
+    emailEl.value = user.email;
+    nomeEl.value = user.user_metadata?.nome || "";
+  }
+
+  document.getElementById("btnSalvar").addEventListener("click", async()=>{
+    msg.textContent = "";
+    const nome = nomeEl.value.trim();
+    const { error } = await db.auth.updateUser({ data: { nome } });
+    msg.style.color = error ? "#f87171" : "#4ade80";
+    msg.textContent = error ? "Erro: " + error.message : "Dados atualizados ✅";
+  });
+
+  document.getElementById("btnSenha").addEventListener("click", async()=>{
+    msg.textContent = "";
+    const novaSenha = novaSenhaEl.value.trim();
+    if(novaSenha.length < 6){
+      msg.style.color="#f87171"; msg.textContent="A senha deve ter pelo menos 6 caracteres"; return;
+    }
+    const { error } = await db.auth.updateUser({ password:novaSenha });
+    msg.style.color = error ? "#f87171" : "#4ade80";
+    msg.textContent = error ? "Erro: " + error.message : "Senha alterada ✅";
+    if(!error) novaSenhaEl.value = "";
+  });
+
+  document.getElementById("btnSair").addEventListener("click", async()=>{
+    await db.auth.signOut();
+    location.href="index.html";
+  });
+</script>
+
+<!-- ✅ Script do Menu Mobile -->
+<script>
+  const sidebarMobile = document.getElementById("sidebar");
+  const toggleMobile = document.getElementById("toggleMenu");
+  const overlay = document.getElementById("menu-overlay");
+
+  toggleMobile?.addEventListener("click", () => {
+    sidebarMobile.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay?.addEventListener("click", () => {
+    sidebarMobile.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+</script>
+
+<!-- ✅ Partículas -->
+<script>
+  const wrap = document.getElementById("particles");
+  for(let i=0;i<90;i++){
+    const d=document.createElement("div");
+    d.className="dot";
+    d.style.left=Math.random()*100+"vw";
+    d.style.top=Math.random()*100+"vh";
+    d.style.animationDelay=Math.random()*10+"s";
+    wrap.appendChild(d);
+  }
+</script>
+
+</body>
+</html>

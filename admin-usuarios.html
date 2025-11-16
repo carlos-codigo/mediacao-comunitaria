@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Usuários • Mediação Comunitária</title>
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-mobile.css"  media="(max-width: 800px)">
+
+  <!-- CSS ESPECÍFICO DA PÁGINA -->
+  <link rel="stylesheet" href="css/admin-usuarios-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-usuarios-mobile.css"  media="(max-width: 800px)">
+</head>
+
+<body>
+<div class="admin-shell layout">
+
+  <!-- SIDEBAR GLOBAL -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <h1>MediAção • Admin</h1>
+    </div>
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html" class="active"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+ 
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+
+    <!-- TOPO MOBILE (usa o padrão do admin-mobile.css: .topbar-mobile) -->
+    <div class="topbar-mobile">
+      <button id="toggleMenu">☰</button>
+      <span>Usuários</span>
+    </div>
+
+    <!-- HEADER DESKTOP -->
+    <div class="header">
+      <h2>Usuários</h2>
+      <div class="crumbs">Admin &rsaquo; Usuários</div>
+    </div>
+
+    <!-- FILTRO / BUSCA -->
+    <section class="card users-filters">
+      <div class="controls">
+        <input id="search" class="input" placeholder="Buscar por nome ou e-mail..." />
+        <button id="filtrar" class="btn">Filtrar</button>
+      </div>
+    </section>
+
+    <!-- TABELA -->
+    <section class="card users-table-wrapper">
+      <table class="table users-table" id="tbl">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Admin</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="4">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+  <!-- OVERLAY MOBILE -->
+  <div id="menu-overlay"></div>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+
+  const { createClient } = supabase;
+  const db = createClient(supabaseUrl, supabaseKey);
+
+  const searchInput = document.getElementById('search');
+  const tbody       = document.getElementById('tbody');
+
+  // ========= AUTH / INICIALIZAÇÃO =========
+  (async () => {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return location.href = "admin.html";
+
+    const { data: perfil } = await db
+      .from("usuarios")
+      .select("is_admin")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!perfil?.is_admin) return location.href = "index.html";
+
+    load();
+  })();
+
+  function escapeHtml(s){
+    return (s || '').toString().replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m]));
+  }
+
+  // ========= CARREGAR USUÁRIOS =========
+  async function load(){
+    const s = searchInput.value.trim();
+    let q = db
+      .from('usuarios')
+      .select('id, email, nome, is_admin')
+      .order('nome', { ascending: true });
+
+    if (s) {
+      q = q.or(`nome.ilike.%${s}%,email.ilike.%${s}%`);
+    }
+
+    const { data, error } = await q;
+
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="4">Erro: ${escapeHtml(error.message)}</td></tr>`;
+      return;
+    }
+
+    if (!data || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="4">Sem resultados.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map(u => `
+      <tr>
+        <td>${escapeHtml(u.nome || '-')}</td>
+        <td>${escapeHtml(u.email || '-')}</td>
+        <td>${u.is_admin
+          ? '<span class="tag tag-admin">SIM</span>'
+          : '<span class="tag">NÃO</span>'}
+        </td>
+        <td>
+          <button class="btn secondary"
+            onclick="toggleAdmin('${u.id}', ${u.is_admin})">
+            ${u.is_admin ? 'Remover Admin' : 'Tornar Admin'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function toggleAdmin(id, isAdmin){
+    if (!confirm(`${isAdmin ? 'Remover' : 'Conceder'} admin para este usuário?`)) return;
+    const { error } = await db
+      .from('usuarios')
+      .update({ is_admin: !isAdmin })
+      .eq('id', id);
+
+    if (error) return alert('Erro: ' + error.message);
+    load();
+  }
+
+  document.getElementById('filtrar').addEventListener('click', load);
+  searchInput.addEventListener('keyup', e => {
+    if (e.key === 'Enter') load();
+  });
+
+  // ========= LOGOUT =========
+  document.getElementById('logout').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    await db.auth.signOut();
+    localStorage.removeItem('usuario');
+    location.href='index.html';
+  });
+
+  // ========= MENU MOBILE (usa admin-mobile.css) =========
+  const sidebar   = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('toggleMenu');
+  const overlay   = document.getElementById('menu-overlay');
+
+  if (toggleBtn && sidebar && overlay) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  }
+</script>
+</body>
+</html>

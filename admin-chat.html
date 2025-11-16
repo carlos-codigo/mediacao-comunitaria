@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Chat • Mediação Comunitária</title>
+
+  <!-- FONTES -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- CSS GLOBAL -->
+  <link rel="stylesheet" href="css/admin-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-mobile.css"  media="(max-width: 800px)">
+
+  <!-- CSS ESPECÍFICO DA PÁGINA -->
+  <link rel="stylesheet" href="css/admin-chat-desktop.css" media="(min-width: 801px)">
+  <link rel="stylesheet" href="css/admin-chat-mobile.css"  media="(max-width: 800px)">
+</head>
+
+<body class="admin-chat">
+
+<div class="admin-shell layout">
+
+  <!-- SIDEBAR (PADRÃO ADMIN) -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/imagens/logo2.png" alt="Logo" />
+      <h1>MediAção • Admin</h1>
+    </div>
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span> 📊 Dashboard</a>
+      <a href="admin-conflitos.html"><span class="dot"></span> 📝 Conflitos</a>
+      <a href="admin-usuarios.html"><span class="dot"></span> 👥 Usuários</a>
+      <a href="admin-chat.html" class="active"><span class="dot"></span> 💬 Chat</a>
+      <a href="admin-config.html"><span class="dot"></span> ⚙ Configurações</a>
+      <a href="admin-estatisticas.html"><span class="dot"></span> 📈 Estatísticas</a>
+      <a href="#" id="logout" class="logout"><span class="dot"></span> 🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="admin-content">
+
+    <!-- TOPO MOBILE -->
+    <div class="topbar-mobile">
+      <button id="toggleMenu">☰</button>
+      <span>Chat</span>
+    </div>
+
+    <!-- HEADER DESKTOP -->
+    <div class="header">
+      <h2>Chat de Mediações</h2>
+      <div class="crumbs">Admin &rsaquo; Chat</div>
+    </div>
+
+    <!-- LAYOUT DO CHAT -->
+    <section class="chat-shell">
+
+      <!-- LISTA DE CONFLITOS -->
+      <aside class="chat-list">
+        <div class="controls" style="margin-bottom:10px;">
+          <input id="search" class="input" placeholder="Buscar mediação..." />
+          <button id="filtrar" class="btn">Buscar</button>
+        </div>
+        <div id="listaConflitos">
+          <div class="tag">Carregando...</div>
+        </div>
+      </aside>
+
+      <!-- JANELA DO CHAT -->
+      <section class="chat-area">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <h3 id="chatTitulo">Nenhuma mediação selecionada</h3>
+          <div id="chatInfo" class="tag">—</div>
+        </div>
+
+        <div id="mensagens" class="messages">
+          <div class="tag">Selecione uma mediação na esquerda ou acima.</div>
+        </div>
+
+        <div class="composer">
+          <input id="texto" placeholder="Digite sua mensagem..." disabled />
+          <button id="enviar" class="btn" disabled>Enviar</button>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- OVERLAY MOBILE -->
+  <div id="menu-overlay"></div>
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ====== SUPABASE CLIENT ======
+  const supabaseUrl = "https://dtriltzrvdhnlxqbiced.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28";
+  const { createClient } = supabase;
+  const db = createClient(supabaseUrl, supabaseKey);
+
+  // ====== ESTADO ======
+  let user = null;
+  let conflitoAtual = null;  // { id, titulo }
+  let sub = null;            // canal realtime atual
+
+  // ====== ELEMENTOS ======
+  const listaConflitos = document.getElementById('listaConflitos');
+  const mensagensBox   = document.getElementById('mensagens');
+  const chatTitulo     = document.getElementById('chatTitulo');
+  const chatInfo       = document.getElementById('chatInfo');
+  const inputTexto     = document.getElementById('texto');
+  const btnEnviar      = document.getElementById('enviar');
+
+  // ====== INIT ======
+  (async () => {
+    const u = await db.auth.getUser();
+    user = u.data.user;
+    if (!user) return location.href = "admin.html";
+
+    // Confirma admin
+    const { data: perfil } = await db
+      .from("usuarios")
+      .select("is_admin, nome")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!perfil?.is_admin) return location.href = "index.html";
+
+    await loadConflitos();
+
+    // eventos
+    document.getElementById('filtrar').addEventListener('click', loadConflitos);
+    document.getElementById('search').addEventListener('keydown', e => {
+      if (e.key === 'Enter') loadConflitos();
+    });
+
+    btnEnviar.addEventListener('click', enviarMensagem);
+    inputTexto.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') enviarMensagem();
+    });
+
+    document.getElementById('logout').addEventListener('click', async (e)=>{
+      e.preventDefault();
+      await db.auth.signOut();
+      localStorage.removeItem('usuario');
+      location.href='index.html';
+    });
+  })();
+
+  // ====== CARREGAR LISTA DE CONFLITOS ======
+  async function loadConflitos(){
+    const q = document.getElementById('search').value?.trim() || '';
+    let query = db
+      .from('conflitos')
+      .select('id, titulo, envolvidos, criado_em')
+      .order('criado_em', { ascending:false });
+
+    if (q) query = query.ilike('titulo', `%${q}%`);
+
+    const { data, error } = await query;
+
+    if (error){
+      listaConflitos.innerHTML = `<div class="tag">Erro: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if (!data?.length){
+      listaConflitos.innerHTML = `<div class="tag">Nenhuma mediação.</div>`;
+      return;
+    }
+
+    listaConflitos.innerHTML = data.map(c => `
+      <div class="item" data-id="${c.id}" data-title="${escapeHtml(c.titulo||'Mediação')}">
+        <div style="font-weight:700">${escapeHtml(c.titulo || 'Mediação')}</div>
+        <div style="font-size:12px; opacity:.7">${escapeHtml(c.envolvidos || '-')}</div>
+      </div>
+    `).join('');
+
+    // clique por delegação
+    listaConflitos.querySelectorAll('.item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        listaConflitos.querySelectorAll('.item').forEach(x=>x.classList.remove('active'));
+        el.classList.add('active');
+        openConf({ id: el.dataset.id, titulo: el.dataset.title });
+      });
+    });
+  }
+
+  // ====== ABRIR CONFLITO ======
+  async function openConf(conf){
+    conflitoAtual = conf;
+    chatTitulo.textContent = conf.titulo;
+    chatInfo.textContent   = `ID: ${conf.id}`;
+    inputTexto.disabled = false;
+    btnEnviar.disabled  = false;
+
+    await loadMensagens();
+
+    // limpa canal anterior
+    if (sub) {
+      try { db.removeChannel(sub); } catch(_) {}
+      sub = null;
+    }
+
+    // assina novas mensagens do conflito
+    sub = db.channel('admin_chat_' + conf.id)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'mensagens',
+        filter: `conflito_id=eq.${conf.id}`
+      }, payload => addMsg(payload.new))
+      .subscribe();
+  }
+
+  // ====== CARREGAR MENSAGENS ======
+  async function loadMensagens(){
+    mensagensBox.innerHTML = `<div class="tag">Carregando…</div>`;
+    const { data, error } = await db
+      .from('mensagens')
+      .select('id, conflito_id, remetente_id, remetente_tip, mensagem, criado_em')
+      .eq('conflito_id', conflitoAtual.id)
+      .order('criado_em', { ascending: true });
+
+    if (error){
+      mensagensBox.innerHTML = `<div class="tag">Erro: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if (!data?.length){
+      mensagensBox.innerHTML = `<div class="tag">Sem mensagens.</div>`;
+      return;
+    }
+
+    mensagensBox.innerHTML = '';
+    data.forEach(addMsg);
+    mensagensBox.scrollTop = mensagensBox.scrollHeight;
+  }
+
+  // ====== ADICIONAR MENSAGEM NA TELA ======
+  function addMsg(m){
+    if (!m || String(m.conflito_id) !== String(conflitoAtual?.id)) return;
+
+    const div = document.createElement('div');
+    const ehAdmin = Number(m.remetente_tip) === 1;
+    div.className = 'msg ' + (ehAdmin ? 'admin' : 'user');
+    const hora = m.criado_em
+      ? new Date(m.criado_em).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+      : '';
+    div.innerHTML = `
+      <div>${escapeHtml(m.mensagem || '')}</div>
+      <small>${hora}</small>
+    `;
+    mensagensBox.appendChild(div);
+    mensagensBox.scrollTop = mensagensBox.scrollHeight;
+  }
+
+  // ====== ENVIAR MENSAGEM ======
+  async function enviarMensagem(){
+    const texto = (inputTexto.value || '').trim();
+    if (!texto || !conflitoAtual) return;
+
+    // mensagem otimista
+    inputTexto.value = '';
+    const otimista = {
+      conflito_id: conflitoAtual.id,
+      remetente_id: user.id,
+      remetente_tip: 1,          // 1 = admin
+      mensagem: texto,
+      criado_em: new Date().toISOString()
+    };
+    addMsg(otimista);
+
+    // insere no banco
+    const { error } = await db.from('mensagens').insert([{
+      conflito_id: otimista.conflito_id,
+      remetente_id: otimista.remetente_id,
+      remetente_tip: otimista.remetente_tip,
+      mensagem: otimista.mensagem
+    }]);
+
+    if (error){
+      alert('Erro ao enviar: ' + error.message);
+      await loadMensagens();
+    }
+  }
+
+  // ====== UTILS ======
+  function escapeHtml(s){
+    return (s||'').toString().replace(/[&<>"']/g, m => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+    ));
+  }
+
+  // ====== MENU MOBILE (mesmo padrão das outras telas) ======
+  const sidebar   = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('toggleMenu');
+  const overlay   = document.getElementById('menu-overlay');
+
+  if (toggleBtn && sidebar && overlay) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  }
+</script>
+
+</body>
+</html>
