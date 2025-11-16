@@ -1,0 +1,160 @@
+/* ===========================================================
+   🌐 GLOBAL (MOBILE) — mesmo visual do desktop, só reorganizado
+   - Carregado via <link media="(max-width: 800px)">
+   - Mantém cores/gradientes originais
+   - Adiciona: partículas + sidebar mobile + overlay + toggle
+   =========================================================== */
+
+/* 1) Reset & Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+  overflow-y: auto; /* mobile rola normalmente */
+}
+
+/* 2) Variáveis (iguais ao desktop) */
+:root {
+  --bg1: #0f172a;
+  --bg2: #1e293b;
+  --accent: #3b82f6;
+  --accent-2: #22c55e;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --card-bg: rgba(15, 23, 42, 0.92);
+  --border: #334155;
+  --shadow: 0 20px 40px rgba(0, 0, 0, .35);
+}
+
+/* 3) Fundo global (Neon B) — igual ao desktop */
+body {
+  background:
+    radial-gradient(1200px 600px at 20% -10%, #2563eb33 0%, transparent 60%),
+    radial-gradient(1200px 600px at 110% 10%, #22c55e33 0%, transparent 60%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 16px;
+}
+
+/* 4) Partículas (mesma estética do desktop) */
+.particles{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.dot{
+  position:absolute; width:3px; height:3px; border-radius:50%;
+  background: radial-gradient(circle, #fff, #ffffff00 60%);
+  opacity:.8; filter: drop-shadow(0 0 8px #7dd3fc);
+  animation: float 12s linear infinite;
+}
+@keyframes float{ from{ transform: translateY(110vh)} to{ transform: translateY(-10vh)} }
+
+/* 5) Layout base: empilha em mobile */
+.layout { display: block; position: relative; z-index: 1; width: 100%; }
+
+/* 6) SIDEBAR — mobile (identidade preservada) */
+aside#sidebar {
+  position: fixed;
+  top: 0; bottom: 0; left: -65vw;
+  width: 65vw; max-width: 420px; /* redução moderada */
+  background: linear-gradient(180deg, #0c1224ee, #0a1020f5);
+  border-right: 1px solid #1f2a44;
+  box-shadow: 0 0 28px rgba(0,0,0,.55);
+  transition: left .3s ease;
+  z-index: 9999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+aside#sidebar.open { left: 0; }
+
+/* 6.1) Overlay escuro + blur */
+#menu-overlay{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+   backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+ 
+}
+#menu-overlay.show{ opacity: 1; pointer-events: auto; }
+
+/* 6.2) Cabeçalho da sidebar */
+aside .brand{
+  padding:22px 22px 12px; display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid #1f2a44;
+}
+aside .brand img{ width:44px; height:44px; border-radius:12px; object-fit:contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+aside .brand h1{ font-size:18px; letter-spacing:.3px }
+aside .brand small{ color:var(--muted); display:block; font-size:12px; margin-top:2px }
+
+/* 6.3) Navegação (mesma estética futurista do desktop) */
+aside nav{ padding:16px; display:flex; flex-direction:column; gap:10px; }
+aside .nav-link{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border:1px solid transparent; border-radius:14px;
+  color:#cfe2ff; text-decoration:none;
+  background: linear-gradient(180deg, #0f1732, #0c142a);
+  transition:.15s ease; position:relative; isolation:isolate;
+  box-shadow: 0 8px 18px rgba(16, 24, 48, .35);
+}
+aside .nav-link::before{
+  content:""; position:absolute; inset:-1px; border-radius:14px;
+  background: linear-gradient(120deg, #1e3a8a, #065f46, #4c1d95);
+  opacity:.18; filter: blur(12px); z-index:-1;
+}
+aside .nav-link:hover{
+  border-color:#264275; transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(30,64,175,.25), 0 4px 12px rgba(16,185,129,.12);
+}
+aside .nav-link.active{
+  border-color:#33558f;
+  box-shadow: 0 0 12px rgba(59,130,246,.35), 0 0 22px rgba(34,197,94,.25), 0 0 38px rgba(168,85,247,.18);
+  outline: 1px solid #2b3f73;
+}
+
+/* 6.4) Rodapé da sidebar */
+.sidebar-footer{
+  margin-top:auto; padding:16px; border-top:1px solid #1f2a44; color:var(--muted); font-size:12px;
+}
+
+/* 7) Header principal (botão ☰ no canto sup. esquerdo) */
+header.top{
+  display:flex; flex-direction:column; align-items:flex-start; gap:10px;
+  padding:18px; border-bottom:1px solid #1f2a44;
+  background: linear-gradient(180deg, #0e1630e6, #0a1228e6);
+  backdrop-filter: blur(10px);
+}
+.toggle{
+  display:inline-flex;
+  border:1px solid #2a3f6b; background:#0e1730; color:#cfe2ff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.25);
+  border-radius:10px; padding:8px 12px; cursor:pointer;
+  font-size: 15px;
+}
+
+/* 8) Conteúdo padrão (cards, tipografia) — mantêm estética */
+.content{ padding:20px; display:flex; flex-direction:column; gap:14px; }
+.card{
+  background: var(--card-bg);
+  border: 1px solid #ffffff22;
+  border-radius: 22px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 92vw;
+  margin: 0 auto;
+}
+h2 { margin-bottom: 12px; font-size: 20px; font-weight: 700; }
+p.legend { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+
+/* 9) Botões (iguais ao desktop, só levemente menores) */
+.btn-primary, .btn{
+  width:100%; border:none; cursor:pointer; border-radius:16px;
+  padding:12px 16px; font-weight:700; font-size:15px; color:#fff;
+  background: linear-gradient(100deg, var(--accent) 0%, #6366f1 35%, var(--accent-2) 100%);
+  box-shadow: 0 10px 20px rgba(59,130,246,.25), 0 6px 12px rgba(34,197,94,.18);
+  transition: transform .15s ease;
+}
+.btn:hover{ transform: scale(1.02); }

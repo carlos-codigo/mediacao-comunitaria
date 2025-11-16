@@ -1,0 +1,185 @@
+/* ===========================================================
+   🖥️ CONFLITO DETALHE — DESKTOP (≥ 801px)
+   Tema igual ao admin dashboard e admin conflitos
+   CORREÇÃO COMPLETA DE SCROLL + ALTURA + OVERFLOW
+   =========================================================== */
+
+@media (min-width: 801px) {
+
+  /* ===== FUNDO ===== */
+  body {
+    background:
+      radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+      radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+      radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+      linear-gradient(135deg, #0a0f1f, #0f172a);
+
+    overflow-x: hidden; /* EVITA BUG — NÃO TRAVA O SCROLL */
+  }
+
+  /* ===== CORRIGE A ALTURA DO LAYOUT (NÃO TRAVA NA TELA) ===== */
+  .admin-shell {
+    display: flex;
+    min-height: 100vh;     /* Agora cresce naturalmente */
+    height: auto;          /* ❗ Importante para desktop */
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .admin-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: linear-gradient(180deg, #0b1220 0%, #0b0f1a 100%);
+    border-right: 1px solid #24314d;
+    padding: 18px 14px;
+    box-shadow: 6px 0 18px rgba(0,0,0,.35);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 5;
+  }
+
+  /* ===== CONTEÚDO PRINCIPAL ===== */
+  .admin-content {
+    flex: 1;
+    padding: 32px 38px;
+
+    min-height: 100vh;
+    height: auto;
+
+    overflow-y: auto;  /* Agora o scroll funciona */
+  }
+
+  /* ===== TOPO DESKTOP ===== */
+  .header {
+    padding: 14px 18px;
+    margin-bottom: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: 14px;
+    border: 1px solid #1f2a44;
+
+    background: linear-gradient(180deg,#0e1630e6,#0a1228e6);
+    box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  }
+
+  .header h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .crumbs {
+    font-size: 13px;
+    color: #9aa7bd;
+  }
+
+  /* ===== CARD DO CONFLITO ===== */
+  .conf-card {
+    max-width: 860px;
+    margin: 0 auto;
+
+    background: #0c1224e6;
+    border: 1px solid #1f2a44;
+    border-radius: 18px;
+
+    padding: 28px 28px 32px;
+
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .conf-card h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #22c55e;
+    margin-bottom: 8px;
+  }
+
+  .label {
+    font-size: 13px;
+    color: #9aa7bd;
+    margin-top: 10px;
+  }
+
+  .value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e7eb;
+  }
+
+  /* ===== BADGE ===== */
+  .status-badge {
+    margin-top: 12px;
+    width: fit-content;
+    padding: 8px 16px;
+
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+
+    border: 1px solid transparent;
+  }
+
+  .s-analise {
+    background: #1b2849;
+    color: #cfe2ff;
+    border-color: #2f4780;
+  }
+
+  .s-andamento {
+    background: #15351f;
+    color: #c8facc;
+    border-color: #2c5d40;
+  }
+
+  .s-resolvido {
+    background: #1b2b1f;
+    color: #86efac;
+    border-color: #3a6a45;
+  }
+
+  /* ===== BOTÕES ===== */
+  .btns {
+    margin-top: 20px;
+    display: flex;
+    gap: 14px;
+  }
+
+  .btn {
+    flex: 1;
+
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+
+    text-align: center;
+    font-weight: 700;
+    color: white;
+
+    cursor: pointer;
+    transition: .15s ease;
+
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #22c55e);
+    box-shadow: 0 10px 20px rgba(59,130,246,.25);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  #msgStatus {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 16px;
+    text-align: center;
+  }
+}

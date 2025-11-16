@@ -1,0 +1,41 @@
+/* ===========================================================
+   ADMIN — ESTATÍSTICAS (DESKTOP ≥ 801px)
+   =========================================================== */
+
+@media (min-width: 801px) {
+
+  .estat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+
+  .estat-grid .full {
+    grid-column: 1 / -1;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .card-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  canvas {
+    width: 100% !important;
+    max-height: 340px !important;
+  }
+
+  .hint {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 13px;
+  }
+}

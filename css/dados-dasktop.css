@@ -1,0 +1,205 @@
+/* ===========================================================
+   📌 DADOS — DESKTOP
+   Mantém o mesmo visual do original (NENHUMA alteração estética)
+   Apenas extraído do HTML para arquivo externo
+   =========================================================== */
+
+/* 1) Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+}
+
+/* 2) Tema Global */
+:root {
+  --bg1:#0b1220;
+  --bg2:#0f172a;
+  --surface:#0c1224e0;
+  --text:#e5e7eb;
+  --muted:#9aa7bd;
+  --primary:#3b82f6;
+  --secondary:#22c55e;
+  --violet:#8b5cf6;
+  --card-border:#1f2a44;
+  --radius:18px;
+  --shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+/* 3) Fundo */
+body {
+  background:
+  radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+  radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+  radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+  linear-gradient(135deg,var(--bg1),var(--bg2));
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* 4) Partículas */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ffffff00 60%);
+  animation: float 12s linear infinite;
+  opacity: .8;
+}
+
+@keyframes float {
+  from { transform: translateY(110vh) }
+  to   { transform: translateY(-10vh) }
+}
+
+/* 5) Layout */
+.layout {
+  display: flex;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* 6) Sidebar */
+aside {
+  width: 300px;
+  min-width: 260px;
+  background: linear-gradient(180deg,#0c1224ee,#0a1020f5);
+  border-right: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  padding: 22px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.brand img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+nav {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #cfe2ff;
+  background: linear-gradient(180deg,#0f1732,#0c142a);
+  border: 1px solid transparent;
+  transition: .15s;
+}
+
+.nav-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px #3b82f659;
+}
+
+.nav-link.active {
+  border-color: #33558f;
+  box-shadow: 0 0 15px #3b82f6;
+}
+
+/* 7) Main */
+main {
+  flex: 1;
+  overflow: auto;
+  padding: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* 8) Card */
+.card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+p {
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+/* 9) Campos */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: #0f172a;
+  border: 1px solid #1e2a45;
+  color: white;
+}
+
+/* 10) Botões */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: white;
+  border-radius: 12px;
+  background: linear-gradient(100deg, var(--primary), var(--violet), var(--secondary));
+  box-shadow: 0 10px 20px rgba(59,130,246,.25);
+  transition: .15s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* 11) Mensagens */
+.msg {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}

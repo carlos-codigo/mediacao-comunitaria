@@ -1,0 +1,40 @@
+/* ===========================================================
+   📝 CONFLITO (MOBILE) — idêntico ao desktop, só reorganizado
+   - Usa sidebar/overlay/toggle do GLOBAL MOBILE
+   - Form em card central, inputs confortáveis
+   =========================================================== */
+
+/* Container principal */
+.content{ padding:20px; display:flex; flex-direction:column; gap:14px; }
+
+/* Card do formulário */
+.card{
+  max-width: 92vw; width:100%;
+  padding: 16px 18px;
+}
+
+/* Títulos/legendas */
+h2{ font-size:20px; margin-bottom:8px }
+p{ margin-bottom:18px; color:var(--muted) }
+
+/* Campos */
+.field{ margin-bottom:16px }
+.field label{ display:block; margin-bottom:6px; color:#cbd5e1; font-size:14px }
+.field input, .field textarea{
+  width:100%; padding:12px 14px; border-radius:14px;
+  background:#0f172a; border:1px solid #1e2a45; color:#e5e7eb; font-size:14px;
+}
+textarea{ min-height:120px; resize:vertical }
+
+/* Botão enviar */
+.btn{
+  width:100%; padding:12px 16px; margin-top:6px; font-weight:700;
+  border:none; cursor:pointer; border-radius:14px; font-size:15px;
+  background: linear-gradient(100deg, var(--accent), #6366f1 35%, var(--accent-2));
+  color:#fff; box-shadow:0 10px 20px rgba(59,130,246,.25);
+  transition:.15s ease;
+}
+.btn:hover{ transform: translateY(-1px) }
+
+/* Mensagem de status */
+.msg{ margin-top:10px; font-size:14px; text-align:center }

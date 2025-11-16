@@ -1,0 +1,178 @@
+/* ===========================================================
+DESABILITADOOOOOOOOOOOOOOOOOOO
+   📌 ANDAMENTO DETALHES — DESKTOP (≥ 801px)
+   Mantém o mesmo visual do restante do sistema (tema neon B)
+   =========================================================== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+}
+
+/* Variáveis globais herdadas do tema */
+:root {
+  --bg1: #0b1220;
+  --bg2: #0f172a;
+  --surface: #0c1224e0;
+  --text: #e5e7eb;
+  --muted: #9aa7bd;
+  --primary: #3b82f6;
+  --secondary: #22c55e;
+  --violet: #8b5cf6;
+  --card-border: #1f2a44;
+  --radius: 18px;
+  --shadow: 0 20px 40px rgba(0,0,0,.35);
+}
+
+/* Fundo */
+body {
+  background:
+    radial-gradient(1200px 600px at 12% 108%, #2563eb26 0%, transparent 60%),
+    radial-gradient(1000px 520px at 108% -8%, #22c55e24 0%, transparent 60%),
+    radial-gradient(900px 520px at 50% -20%, #a855f718 0%, transparent 60%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Layout principal */
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar (mesma do desktop padrão) */
+aside {
+  width: 300px;
+  min-width: 260px;
+  background: linear-gradient(180deg,#0c1224ee,#0a1020f5);
+  border-right: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  padding: 22px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+}
+.brand img { width: 44px; height: 44px; border-radius: 12px; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+.brand small { color: var(--muted); font-size: 12px; }
+
+/* Navegação */
+nav {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #cfe2ff;
+  background: linear-gradient(180deg,#0f1732,#0c142a);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: .15s;
+}
+.nav-link:hover { transform: translateY(-1px); box-shadow:0 0 18px #3b82f659 }
+.nav-link.active { border-color:#33558f; box-shadow:0 0 15px #3b82f6 }
+
+/* Main */
+main {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--card-border);
+  background: linear-gradient(180deg,#0e1630e6,#0a1228e6);
+  backdrop-filter: blur(10px);
+}
+.toggle { display: none; }
+
+/* Conteúdo */
+.content {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 900px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  font-size: 15px;
+}
+
+.card::after {
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:var(--radius);
+  background: radial-gradient(600px 140px at 10% -10%, #2563eb26 0%, transparent 60%),
+              radial-gradient(600px 140px at 110% 110%, #22c55e1f 0%, transparent 60%);
+  pointer-events:none;
+}
+
+.label { font-size:13px; color:var(--muted); margin-bottom:4px }
+.value { font-size:17px; font-weight:600 }
+
+/* Tags */
+.tag {
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid transparent;
+}
+.tag.wait { background:#a855f726; color:#e9d5ff; border-color:#a855f755 }
+.tag.prog { background:#3b82f626; color:#93c5fd; border-color:#3b82f655 }
+.tag.ok   { background:#22c55e26; color:#86efac; border-color:#22c55e55 }
+
+/* Botão */
+.btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(100deg,var(--primary),var(--violet),var(--secondary));
+  box-shadow:0 10px 20px rgba(59,130,246,.25);
+  transition:.15s;
+}
+.btn:hover { transform:translateY(-2px) }

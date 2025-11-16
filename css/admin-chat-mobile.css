@@ -1,0 +1,116 @@
+/* ============================================================
+   📱 ADMIN — CHAT (MOBILE ≤ 800px)
+   Estilo Clean Corporate — Mensagens ajustadas
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+  .chat-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Lista */
+  .chat-list {
+    background: #0f172ab0;
+    border: 1px solid #1f2a44;
+    border-radius: 14px;
+    padding: 14px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .chat-list .item {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    background: #1a2338;
+  }
+
+  .chat-list .item.active {
+    border: 1px solid #3b82f6;
+    background: #1e3a8acc;
+  }
+
+  /* Área do chat */
+  .chat-area {
+    display: flex;
+    flex-direction: column;
+    background: #0f172ab0;
+    border: 1px solid #1f2a44;
+    border-radius: 14px;
+    padding: 14px;
+    height: 65vh;
+  }
+
+  /* Título */
+  #chatTitulo {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  #chatInfo {
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 6px;
+    opacity: .7;
+  }
+
+  /* Mensagens */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .msg.user {
+    max-width: 80%;
+    padding: 10px 13px;
+    border-radius: 18px 18px 18px 6px;
+    background: #1f2937d8;
+    align-self: flex-start;
+    font-size: 14px;
+  }
+
+  .msg.admin {
+    max-width: 80%;
+    padding: 10px 13px;
+    border-radius: 18px 18px 6px 18px;
+    background: linear-gradient(120deg, #2563eb, #3b82f6);
+    align-self: flex-end;
+    color: white;
+    font-size: 14px;
+  }
+
+  .msg small {
+    font-size: 10px;
+    margin-top: 4px;
+    opacity: .7;
+  }
+
+  /* Composer */
+  .composer {
+    display: grid;
+    grid-template-columns: 1fr 70px;
+    gap: 10px;
+  }
+
+  .composer input {
+    padding: 13px 12px;
+    font-size: 14px;
+    border-radius: 12px;
+    border: 1px solid #1f2a44;
+    background: #0b1224;
+    color: white;
+  }
+
+  .composer button {
+    border-radius: 12px;
+    font-size: 14px;
+    padding: 10px 0;
+  }
+}

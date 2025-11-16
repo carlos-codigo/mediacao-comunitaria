@@ -1,0 +1,205 @@
+@media (min-width: 801px) {
+
+  /* =============================
+     🌌 FUNDO ULTRA PREMIUM (DESKTOP)
+     ============================= */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+
+    background:
+      radial-gradient(circle at 20% -10%, rgba(56,189,248,0.25), transparent 60%),
+      radial-gradient(circle at 110% 80%, rgba(167,139,250,0.25), transparent 60%),
+      linear-gradient(145deg, #0b0e18, #090c14, #05070c);
+
+    background-attachment: fixed;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+  }
+
+  /* =============================
+     🖥 CONTAINER PRINCIPAL
+     ============================= */
+  .page {
+    width: 420px;
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* =============================
+     🔱 LOGO COM GLOW
+     ============================= */
+  .logo-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo {
+    width: 700px;
+
+    filter:
+      drop-shadow(0 0 16px rgba(56,189,248,0.4))
+      drop-shadow(0 0 28px rgba(167,139,250,0.25));
+
+    animation: glowDesktop 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes glowDesktop {
+    from {
+      filter:
+        drop-shadow(0 0 12px rgba(56,189,248,0.25))
+        drop-shadow(0 0 20px rgba(167,139,250,0.15));
+    }
+    to {
+      filter:
+        drop-shadow(0 0 26px rgba(56,189,248,0.55))
+        drop-shadow(0 0 36px rgba(167,139,250,0.35));
+    }
+  }
+
+
+  /* =============================
+     🧊 CARD GLASS LUXO (DESKTOP)
+     ============================= */
+  .card {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    padding: 34px 28px;
+
+    border-radius: 24px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+      0 22px 60px rgba(0,0,0,0.45),
+      inset 0 0 26px rgba(255,255,255,0.03);
+  }
+
+  .card h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .legend {
+    font-size: 15px;
+    color: #cbd5e1;
+    margin-bottom: 22px;
+  }
+
+
+  /* =============================
+     ✏ INPUTS PROFISSIONAIS
+     ============================= */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .input input {
+    width: 100%;
+    padding: 7px;
+    border-radius: 16px;
+
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+
+    color: white;
+    font-size: 15px;
+
+    transition: all .2s ease;
+  }
+
+  .input input:focus {
+    background: rgba(255,255,255,0.15);
+    border-color: #3b82f6;
+    box-shadow: 0 0 12px #3b82f645;
+    outline: none;
+  }
+
+
+  /* =============================
+     🎨 BOTÃO ULTRA PREMIUM
+     ============================= */
+  .btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 16px;
+
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+
+    font-size: 17px;
+    font-weight: 700;
+    color: white;
+
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #22c55e);
+
+    box-shadow:
+      0 15px 32px rgba(0,0,0,0.45),
+      0 0 16px rgba(59,130,246,0.35);
+
+    transition: transform .18s ease, box-shadow .25s ease;
+  }
+
+  .btn:active {
+    transform: scale(.97);
+    box-shadow: 0 8px 16px rgba(0,0,0,.55);
+  }
+
+
+  /* =============================
+     🔗 LINKS
+     ============================= */
+  .register {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 15px;
+    color: #cbd5e1;
+  }
+
+  .register a {
+    color: #60a5fa;
+    font-weight: 600;
+  }
+
+
+  /* =============================
+     ⚠ ERRO
+     ============================= */
+  .msg-erro {
+    margin-top: 12px;
+    color: #ef4444;
+    text-align: center;
+    font-size: 15px;
+  }
+}

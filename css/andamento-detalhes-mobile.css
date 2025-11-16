@@ -1,0 +1,87 @@
+/* ===========================================================
+DESABILITADOOOOOOOOOOOOOOOOOOO
+   📌 ANDAMENTO DETALHES — MOBILE (≤ 800px)
+   Baseado no layout mobile do HOME (menu dentro de card, etc.)
+   =========================================================== */
+
+@media (max-width: 800px){
+
+body {
+  padding: 0;
+  overflow: auto;
+}
+
+.layout {
+  flex-direction: column;
+}
+
+/* Sidebar vira drawer */
+aside {
+  position: fixed;
+  left: -100%;
+  top: 0;
+  bottom: 0;
+  z-index: 9;
+  transition: left .25s ease;
+}
+aside.open { left: 0; }
+
+/* Botão menu */
+.toggle {
+  display: inline-flex;
+  border: 1px solid #2a3f6b;
+  background: #0e1730;
+  color: #cfe2ff;
+  box-shadow: 0 0 12px rgba(59,130,246,.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Overlay */
+#menu-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.45);
+  z-index:8;
+}
+#menu-overlay.show { display:block; }
+
+/* Header */
+header.top {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 18px;
+}
+
+/* Cards empilhados 100% width */
+.content {
+  padding: 18px;
+  max-width: 100%;
+}
+
+.card {
+  width: 100%;
+  border-radius: 20px;
+  padding: 18px;
+  font-size: 15px;
+}
+
+/* Timeline em lista vertical */
+#statusTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+/* Voltar ocupa largura total */
+.card button.btn {
+  width: 100%;
+  margin-top: 10px;
+}
+}

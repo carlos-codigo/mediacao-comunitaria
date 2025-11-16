@@ -1,0 +1,113 @@
+/* ===========================================================
+   💬 CHAT — DESKTOP (≥ 801px)
+   Mantém seu visual neon + partículas + layout 2 colunas
+   =========================================================== */
+
+@media (min-width: 801px){
+
+  .layout{ display:flex; height:100vh; position:relative; z-index:1; }
+
+  aside{
+    width:300px; min-width:260px;
+    background: linear-gradient(180deg,#0c1224ee,#0a1020f5);
+    border-right:1px solid var(--border, #334155);
+    box-shadow: var(--shadow, 0 20px 40px rgba(0,0,0,.35));
+    display:flex; flex-direction:column;
+  }
+  .brand{
+    padding:22px; display:flex; gap:12px; align-items:center;
+    border-bottom:1px solid var(--border, #334155);
+  }
+  .brand img{ width:44px; height:44px; object-fit:contain; border-radius:12px }
+
+  nav{ padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .nav-link{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 14px; border-radius:14px;
+    color:#cfe2ff; background:linear-gradient(180deg,#0f1732,#0c142a);
+    text-decoration:none; border:1px solid transparent; transition:.15s;
+  }
+  .nav-link:hover{ transform:translateY(-1px); box-shadow:0 0 18px #3b82f659 }
+  .nav-link.active{ border-color:#33558f; box-shadow:0 0 15px #3b82f6 }
+
+  main{ flex:1; display:flex; flex-direction:column; padding:28px; overflow:hidden; }
+
+  .topbar-desktop{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:12px; color:var(--text);
+  }
+  .chat-title{ font-weight:700; font-size:18px }
+  .chat-sub{ color:var(--muted); font-size:13px }
+  .whoami{ color:var(--muted); font-size:13px }
+
+  .shell{
+    display:grid; grid-template-columns: 320px 1fr; gap:16px; height:100%;
+  }
+
+  .conf-list{
+    display:flex; flex-direction:column; gap:10px;
+    background:var(--card-bg); border:1px solid var(--border, #334155);
+    border-radius: var(--radius, 18px); padding:14px; box-shadow: var(--shadow);
+    overflow:auto;
+  }
+  .conf-item{
+    border:1px solid #223356; border-radius:12px; padding:10px 12px; cursor:pointer;
+    background: linear-gradient(180deg,#0f1732,#0c142a);
+    transition:.15s;
+  }
+  .conf-item:hover{ transform: translateX(2px); border-color:#2a4777 }
+  .conf-item.active{ border-color:#2aa477; box-shadow:0 0 12px rgba(34,197,94,.35) }
+
+  .conf-title{ font-weight:700; font-size:14px }
+  .conf-sub{ color:var(--muted); font-size:12px }
+
+  .chat-panel{ display:flex; flex-direction:column; min-width:0; }
+
+  .chat-header-desktop{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--card-bg); border:1px solid var(--border, #334155);
+    border-radius:var(--radius, 18px); padding:14px 18px; box-shadow:var(--shadow);
+    margin-bottom:12px;
+  }
+
+  .chat-body{
+    flex:1; overflow:auto; padding:18px;
+    background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
+    border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
+    box-shadow:var(--shadow); backdrop-filter:blur(8px);
+    display:flex; flex-direction:column; gap:12px; min-height:0;
+  }
+
+  .msg{
+    max-width:min(70%, 740px);
+    padding:12px 14px; border-radius:14px; position:relative;
+    display:inline-block; word-wrap:break-word; white-space:pre-wrap;
+    border:1px solid #234; box-shadow: 0 8px 18px rgba(0,0,0,.25);
+  }
+  .from-user{ align-self:flex-end; background:linear-gradient(100deg,#1b2546,#243260); border-color:#345; }
+  .from-admin{ align-self:flex-start; background:linear-gradient(100deg,#15351f,#193826); border-color:#355a45; }
+  .meta{ position:relative; font-size:11px; color:#cbd5e1; opacity:.9; margin:0 6px 4px 6px; }
+  .meta.right{ text-align:right }
+  .meta.left{ text-align:left }
+
+  .composer{
+    display:flex; gap:10px; margin-top:12px;
+    background:var(--card-bg); border:1px solid var(--border, #334155);
+    border-radius:999px; padding:10px; align-items:center; box-shadow:var(--shadow);
+  }
+  .composer textarea{
+    flex:1; resize:none; height:46px; border:none; outline:none;
+    background:transparent; color:white; font-family:inherit; font-size:14px;
+    padding:6px 10px;
+  }
+  .send{
+    min-width:46px; height:46px; border-radius:50%;
+    border:none; cursor:pointer; font-weight:700; color:white;
+    background: linear-gradient(100deg, var(--accent, #3b82f6), #6366f1, var(--accent-2, #22c55e));
+    box-shadow: 0 10px 20px rgba(59,130,246,.25);
+    transition:.15s;
+  }
+  .send:hover{ transform:translateY(-2px) }
+
+  .empty{ text-align:center; color:var(--muted); margin-top:18px; }
+}
