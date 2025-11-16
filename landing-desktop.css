@@ -101,6 +101,32 @@ body {
 .menu-btn {
   display: none;
 }
+/* GARANTIR QUE O HERO NÃO COBRA AS OUTRAS SEÇÕES */
+.hero {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-bg,
+.hero-overlay {
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5; /* Conteúdo do hero acima de bg e overlay */
+}
+
+/* Forçar que as seções abaixo fiquem acima do hero */
+.sobre,
+.como-funciona,
+.recursos,
+.contato,
+.footer {
+  position: relative;
+  z-index: 10;
+}
+
 
 /* ===========================================================
    HERO • CINEMATIC SECTION
@@ -385,3 +411,4 @@ body {
 .menu-btn {
   display: none !important;
 }
+
