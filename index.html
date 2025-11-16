@@ -5,87 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mediação Comunitária</title>
 
-  <!-- Estilos separados -->
   <link rel="stylesheet" href="css/index-desktop.css" media="(min-width: 801px)">
   <link rel="stylesheet" href="css/index-mobile.css" media="(max-width: 800px)">
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
-<main class="page">
 
-  <!-- LOGO -->
+<main class="page">
   <div class="logo-wrap">
-    <img src="assets/imagens/logo2.png" alt="Logo Mediação" class="logo" id="logoImg" />
+    <img src="assets/imagens/logo2.png" alt="Logo Mediação" class="logo" />
   </div>
 
-  <!-- LOGIN USUÁRIO -->
-  <div class="card" id="loginNormal">
+  <div class="card">
     <h2>Entrar</h2>
     <p class="legend">Acesse sua conta para continuar</p>
 
     <div class="field">
-      <label for="email">E-mail</label>
-      <div class="input"><input type="email" id="email" placeholder="seu@email.com" /></div>
+      <label>E-mail</label>
+      <div class="input"><input type="email" id="email"></div>
     </div>
 
     <div class="field">
-      <label for="password">Senha</label>
-      <div class="input"><input type="password" id="password" placeholder="••••••••" /></div>
+      <label>Senha</label>
+      <div class="input"><input type="password" id="password"></div>
     </div>
 
     <button class="btn" id="loginBtn">Entrar</button>
 
     <div class="register">Não tem conta? <a href="cadastro.html">Criar conta</a></div>
-    <div class="register" style="margin-top: 8px;">🔑 <a href="admin.html" class="admin-link">Sou administrador</a></div>
+    <div class="register">🔑 <a href="admin.html">Sou administrador</a></div>
+
+    <!-- VOLTAR AO INÍCIO -->
+    <div class="register" style="margin-top: 16px;">
+      ⬅ <a href="landing.html" class="back-home-link">Voltar ao início</a>
+    </div>
 
     <p id="msg" class="msg-erro"></p>
   </div>
-
 </main>
 
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const db = supabase.createClient(
-    "https://dtriltzrvdhnlxqbiced.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
-  );
+const db = supabase.createClient(
+  "https://dtriltzrvdhnlxqbiced.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0cmlsdHpydmRobmx4cWJpY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MDM1NzMsImV4cCI6MjA3Njk3OTU3M30.S4gwVrXBiM3wbmp_LOfaFhpbTlnnaw7fZNSgpbzDI28"
+);
 
+document.getElementById("loginBtn").onclick = async () => {
+  const email = document.getElementById("email").value.trim();
+  const pass = document.getElementById("password").value.trim();
   const msg = document.getElementById("msg");
 
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    msg.textContent = "";
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  if (!email || !pass) {
+    msg.textContent = "Preencha todos os campos.";
+    return;
+  }
 
-    if (!email || !password) {
-      msg.textContent = "Preencha todos os campos.";
-      return;
-    }
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
 
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
+  if (error) {
+    msg.textContent = "Erro: " + error.message;
+    return;
+  }
 
-    if (error) {
-      msg.textContent = "Erro ao entrar: " + error.message;
-      return;
-    }
+  const userId = data.user.id;
+  const { data: perfil } = await db.from("usuarios").select("is_admin").eq("id", userId).maybeSingle();
 
-    const { data: perfil } = await db
-      .from("usuarios")
-      .select("is_admin")
-      .eq("id", data.user.id)
-      .maybeSingle();
-
-    if (perfil?.is_admin === true) {
-      msg.style.color = "#fbc02d";
-      msg.textContent = "Esta conta é de administradora. Use o login administrativo.";
-      await db.auth.signOut();
-    } else {
-      window.location.href = "home.html";
-    }
-  });
+  if (perfil?.is_admin) {
+    msg.textContent = "Esta conta é de administrador.";
+    await db.auth.signOut();
+  } else {
+    location.href = "home.html";
+  }
+};
 </script>
 
 </body>
