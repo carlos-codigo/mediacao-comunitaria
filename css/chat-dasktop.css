@@ -41,7 +41,11 @@
   .whoami{ color:var(--muted); font-size:13px }
 
   .shell{
-    display:grid; grid-template-columns: 320px 1fr; gap:16px; height:100%;
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:16px;
+    height:100%;
+    grid-template-rows: minmax(0, 1fr); /* limita a linha à altura disponível */
   }
 
   .conf-list{
@@ -61,7 +65,13 @@
   .conf-title{ font-weight:700; font-size:14px }
   .conf-sub{ color:var(--muted); font-size:12px }
 
-  .chat-panel{ display:flex; flex-direction:column; min-width:0; }
+  .chat-panel{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    height:100%;   /* ocupa toda a linha do grid */
+    min-height:0;  /* permite o filho (chat-body) encolher e scrollar */
+  }
 
   .chat-header-desktop{
     display:flex; justify-content:space-between; align-items:center;
@@ -71,7 +81,10 @@
   }
 
   .chat-body{
-    flex:1; overflow:auto; padding:18px;
+    flex:1;
+    overflow-y:auto; /* scroll vertical dentro da área de mensagens */
+    max-height: calc(100vh - 220px); /* 🔹 NOVO: limita a altura como no mobile */
+    padding:18px;
     background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
     border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
     box-shadow:var(--shadow); backdrop-filter:blur(8px);
@@ -110,4 +123,20 @@
   .send:hover{ transform:translateY(-2px) }
 
   .empty{ text-align:center; color:var(--muted); margin-top:18px; }
+}
+
+/* 🔹 Scrollbar custom — mantém teu visual */
+.chat-body{
+  scrollbar-width: thin;           /* Firefox */
+  scrollbar-color: #3b82f6 #0c1224;/* Cor da barra + trilha */
+}
+.chat-body::-webkit-scrollbar{
+  width: 8px;                      /* Largura da barra */
+}
+.chat-body::-webkit-scrollbar-track{
+  background: #0c1224;
+}
+.chat-body::-webkit-scrollbar-thumb{
+  background: #3b82f6;
+  border-radius: 6px;
 }
