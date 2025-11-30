@@ -30,7 +30,8 @@
   .nav-link:hover{ transform:translateY(-1px); box-shadow:0 0 18px #3b82f659 }
   .nav-link.active{ border-color:#33558f; box-shadow:0 0 15px #3b82f6 }
 
-  main{ flex:1; display:flex; flex-direction:column; padding:28px; overflow:hidden; }
+  /* 👇 AQUI É A MUDANÇA IMPORTANTE: libera o scroll da página */
+  main{ flex:1; display:flex; flex-direction:column; padding:28px; overflow:auto; }
 
   .topbar-desktop{
     display:flex; align-items:center; justify-content:space-between;
@@ -68,8 +69,8 @@
 
   .chat-panel{
     display:flex; flex-direction:column; min-width:0;
-    height:100%;        /* 🔹 painel do chat ocupa toda a célula */
-    min-height:0;       /* 🔹 deixa o chat-body encolher e ter scroll */
+    height:100%;        /* painel do chat ocupa toda a célula */
+    min-height:0;       /* deixa o chat-body encolher e ter scroll */
   }
 
   .chat-header-desktop{
@@ -80,8 +81,8 @@
   }
 
   .chat-body{
-    flex:1;             /* 🔹 ocupa o espaço ENTRE o header e o composer */
-    overflow:auto;      /* 🔹 scroll interno das mensagens */
+    flex:1;             /* ocupa o espaço ENTRE o header e o composer */
+    overflow:auto;      /* scroll interno das mensagens */
     padding:18px;
     background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
     border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
