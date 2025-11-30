@@ -412,3 +412,84 @@ body {
   display: none !important;
 }
 
+/* ===========================================================
+   ⭐ SEÇÃO — EQUIPE (DESKTOP)
+=========================================================== */
+.equipa {
+  padding: 150px 0;
+  background: linear-gradient(180deg,#0b1220,#080c18);
+}
+
+.container-equipa {
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+  padding: 0 40px;
+}
+
+.equipa-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  text-shadow: var(--neon);
+}
+
+.equipa-founder {
+  background: var(--glass);
+  padding: 50px 60px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  transition:.35s ease;
+}
+.equipa-founder:hover{
+  transform: translateY(-6px);
+  box-shadow: var(--neon);
+}
+
+.equipa-name {
+  font-size: 3.6rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  background: linear-gradient(90deg,var(--primary),var(--violet),var(--secondary));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.equipa-role {
+  font-size: 1.4rem;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+
+.equipa-subtitle {
+  margin-top: 60px;
+  font-size: 1.6rem;
+  color: var(--text);
+  opacity: .9;
+  margin-bottom: 28px;
+}
+
+.equipa-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.equipa-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 26px 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  backdrop-filter: blur(14px);
+  transition: .3s ease;
+}
+.equipa-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--neon);
+}
+
