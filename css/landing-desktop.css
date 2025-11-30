@@ -101,6 +101,7 @@ body {
 .menu-btn {
   display: none;
 }
+
 /* GARANTIR QUE O HERO NÃO COBRA AS OUTRAS SEÇÕES */
 .hero {
   position: relative;
@@ -413,7 +414,7 @@ body {
 }
 
 /* ============================================================
-   🔥 TEAM SECTION — ESTILO PREMIUM UNIFORME
+   🔥 TEAM SECTION — 1 LÍDER EM CIMA + EQUIPE EM GRID
 ============================================================ */
 .team-section {
   padding: 160px 0 120px;
@@ -430,18 +431,7 @@ body {
   text-shadow: 0 0 22px rgba(59,130,246,0.35);
 }
 
-/* Grade responsiva — todos iguais */
-.team-grid {
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 28px;
-  padding: 0 40px;
-}
-
-/* CARD BASE */
+/* CARD BASE (todos iguais em tamanho e estilo) */
 .team-card {
   background: rgba(15,23,42,.85);
   border: 1px solid rgba(255,255,255,0.06);
@@ -459,7 +449,22 @@ body {
   box-shadow: 0 0 22px rgba(59,130,246,.35);
 }
 
-/* Nome — 100% igual para todos */
+/* Card do líder — mesma base, só centralizado e com largura máxima */
+.team-leader {
+  max-width: 900px;
+  margin: 0 auto 50px auto;
+}
+
+/* GRID da equipe — 4 lado a lado */
+.team-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* Nome */
 .team-card h3 {
   font-size: 1.35rem;
   font-weight: 700;
@@ -484,6 +489,9 @@ body {
   margin-top: 6px;
 }
 
-
-
-
+/* Degradê suave se você usar <span> no nome (opcional) */
+.team-card h3 span {
+  background: linear-gradient(90deg, #3b82f6, #a855f7, #22c55e);
+  -webkit-background-clip: text;
+  color: transparent;
+}
