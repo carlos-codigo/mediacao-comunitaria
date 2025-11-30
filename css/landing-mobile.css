@@ -327,72 +327,69 @@ body{
 /* ===========================================================
    ⭐ SEÇÃO — EQUIPE (MOBILE)
 =========================================================== */
-/* ===========================================================
-   🔥 TEAM SECTION — MOBILE (hero + cards empilhados)
-=========================================================== */
-.team-section {
-  padding: 80px 0 90px;
-  background: linear-gradient(180deg, #0b1220, #050816);
+.equipa {
+  padding: 90px 0;
+  text-align:center;
 }
 
-.team-title {
-  font-size: 1.9rem;
-  text-align: center;
-  margin-bottom: 24px;
-  font-weight: 800;
-  text-shadow: var(--neon);
-}
-
-.team-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.container-equipa {
   padding: 0 18px;
 }
 
-/* hero e demais visualmente parecidos no mobile */
-.team-card {
-  position: relative;
-  border-radius: 18px;
-  padding: 18px 16px 16px;
-  text-align: center;
-  background:
-    radial-gradient(circle at top left, rgba(59,130,246,.22), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(168,85,247,.22), transparent 55%),
-    rgba(15,23,42,.98);
-  border: 1px solid rgba(148,163,184,.85);
-  box-shadow: 0 14px 30px rgba(15,23,42,.9);
-  backdrop-filter: blur(12px);
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+.equipa-title {
+  font-size: 2rem;
+  font-weight:800;
+  text-shadow:var(--neon);
+  margin-bottom: 24px;
 }
 
-.team-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--neon);
+.equipa-founder {
+  background: var(--glass);
+  padding: 36px 22px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  box-shadow:var(--shadow);
 }
 
-.team-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, var(--primary), var(--violet), var(--secondary));
-  -webkit-background-clip: text;
-  color: transparent;
+.equipa-name {
+  font-size: 2rem;
+  font-weight:900;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg,var(--primary),var(--violet),var(--secondary));
+  -webkit-background-clip:text;
+  color:transparent;
 }
 
-.team-card .role {
-  font-size: .88rem;
-  margin-top: 4px;
+.equipa-role {
   color: var(--muted);
+  font-size: 1rem;
 }
 
-.team-card .bio {
-  margin-top: 6px;
-  font-size: .8rem;
-  color: #e2e8f0;
-  line-height: 1.35;
+.equipa-subtitle {
+  margin-top:40px;
+  font-size:1.3rem;
+  color:var(--text);
+  opacity:.9;
+  margin-bottom:20px;
 }
 
+.equipa-grid {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
 
+.equipa-card {
+  padding:18px;
+  background:var(--glass);
+  border-radius:var(--radius);
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  font-size:1.05rem;
+  font-weight:600;
+}
 
 
 
