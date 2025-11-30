@@ -45,14 +45,15 @@
     grid-template-columns: 320px 1fr;
     gap:16px;
     height:100%;
-    grid-template-rows: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr); /* linha ocupa 100% da altura disponível */
   }
 
   .conf-list{
     display:flex; flex-direction:column; gap:10px;
     background:var(--card-bg); border:1px solid var(--border, #334155);
     border-radius: var(--radius, 18px); padding:14px; box-shadow: var(--shadow);
-    overflow:auto;
+    overflow:auto;                  /* 🔹 scroll na lista de mediações */
+    min-height:0;                   /* permite a lista encolher e rolar */
   }
   .conf-item{
     border:1px solid #223356; border-radius:12px; padding:10px 12px; cursor:pointer;
@@ -67,6 +68,8 @@
 
   .chat-panel{
     display:flex; flex-direction:column; min-width:0;
+    height:100%;        /* 🔹 painel do chat ocupa toda a célula */
+    min-height:0;       /* 🔹 deixa o chat-body encolher e ter scroll */
   }
 
   .chat-header-desktop{
@@ -77,10 +80,8 @@
   }
 
   .chat-body{
-    /* 🔽 aqui é onde a mágica acontece: caixa fixa + scroll interno */
-    flex:1;
-    overflow-y:auto;
-    max-height: calc(100vh - 260px); /* altura fixa aproximada, ajusta se quiser */
+    flex:1;             /* 🔹 ocupa o espaço ENTRE o header e o composer */
+    overflow:auto;      /* 🔹 scroll interno das mensagens */
     padding:18px;
     background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
     border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
