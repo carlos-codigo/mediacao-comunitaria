@@ -325,68 +325,83 @@ body{
   display: block;
 }
 /* ===========================================================
-   🔥 TEAM SECTION — MOBILE (≤ 800px)
-   Mesma identidade, versão empilhada
+   TEAM SECTION — MOBILE (≤ 800px)
+   Mesmo conteúdo da versão desktop, adaptado para coluna
 =========================================================== */
 
-.team-section{
-  padding: 70px 0 60px;
+.team-section {
+  padding: 80px 0 70px;
   background: linear-gradient(180deg, #0b1220, #050816);
 }
 
-.team-title{
-  text-align:center;
-  font-size:1.9rem;
-  font-weight:800;
-  margin-bottom:26px;
+/* Título */
+.team-title {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 26px;
   color: #ecf1f9;
-  text-shadow:
-    0 0 14px rgba(59,130,246,.45),
-    0 0 24px rgba(34,197,94,.25);
+  text-shadow: 0 0 18px rgba(59,130,246,0.35);
 }
 
-/* Grade vira uma coluna só no mobile */
-.team-grid{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  padding:0 18px;
+/* Card base — igual pra todo mundo */
+.team-card {
+  background: var(--glass);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  margin: 0 18px 16px 18px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.09);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 24px rgba(0,0,0,0.45);
 }
 
-/* Card base – mesmo “peso” pra todo mundo */
-.team-card{
-  background:rgba(15,23,42,.92);
-  border-radius:18px;
-  padding:18px 16px 16px;
-  border:1px solid rgba(148,163,184,.65);
-  box-shadow:0 12px 22px rgba(0,0,0,.55);
-  backdrop-filter:blur(10px);
-  text-align:center;
+/* Card do líder: só ganha um espacinho extra embaixo */
+.team-leader {
+  margin-bottom: 22px;
+}
+
+/* Subtítulo "Equipe de Desenvolvimento" */
+.team-subtitle {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* Como no mobile é tudo em coluna, o grid vira coluna também */
+.team-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 /* Nome */
-.team-card h3{
-  font-size:1.1rem;
-  font-weight:700;
-  color:#ffffff;
-  margin-bottom:6px;
+.team-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
 }
 
 /* Cargo */
-.team-card .role{
-  display:block;
-  font-size:.9rem;
-  font-weight:600;
-  color:#9fb0c9;
-  margin-bottom:6px;
+.team-card .role {
+  font-size: .9rem;
+  font-weight: 600;
+  color: #9fb0c9;
+  margin-bottom: 6px;
+  display: block;
 }
 
 /* Bio */
-.team-card .bio{
-  font-size:.82rem;
-  line-height:1.45;
-  color:#d5deed;
+.team-card .bio {
+  font-size: .86rem;
+  line-height: 1.45;
+  color: #cad4e3;
 }
+
+
 
 
 
