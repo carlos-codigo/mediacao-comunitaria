@@ -5,8 +5,7 @@
 
 @media (min-width: 801px){
 
-  /* 👇 ALTERAÇÃO 1 — libera scroll externo */
-  .layout{ display:flex; min-height:100vh; position:relative; z-index:1; }
+  .layout{ display:flex; height:100vh; position:relative; z-index:1; }
 
   aside{
     width:300px; min-width:260px;
@@ -31,7 +30,7 @@
   .nav-link:hover{ transform:translateY(-1px); box-shadow:0 0 18px #3b82f659 }
   .nav-link.active{ border-color:#33558f; box-shadow:0 0 15px #3b82f6 }
 
-  main{ flex:1; display:flex; flex-direction:column; padding:28px; }
+  main{ flex:1; display:flex; flex-direction:column; padding:28px; overflow:hidden; }
 
   .topbar-desktop{
     display:flex; align-items:center; justify-content:space-between;
@@ -45,6 +44,8 @@
     display:grid;
     grid-template-columns: 320px 1fr;
     gap:16px;
+    height:100%;
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .conf-list{
@@ -75,15 +76,16 @@
     margin-bottom:12px;
   }
 
-  /* 👇 ALTERAÇÃO 2 — scroll interno real */
   .chat-body{
+    /* 🔽 aqui é onde a mágica acontece: caixa fixa + scroll interno */
+    flex:1;
     overflow-y:auto;
+    max-height: calc(100vh - 260px); /* altura fixa aproximada, ajusta se quiser */
     padding:18px;
-    height:50vh; /* 🔥 altura fixa = scroll interno */
     background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
     border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
     box-shadow:var(--shadow); backdrop-filter:blur(8px);
-    display:flex; flex-direction:column; gap:12px;
+    display:flex; flex-direction:column; gap:12px; min-height:0;
   }
 
   .msg{
@@ -92,7 +94,7 @@
     display:inline-block; word-wrap:break-word; white-space:pre-wrap;
     border:1px solid #234; box-shadow: 0 8px 18px rgba(0,0,0,.25);
   }
-  .from-user{ align_self:flex-end; background:linear-gradient(100deg,#1b2546,#243260); border-color:#345; }
+  .from-user{ align-self:flex-end; background:linear-gradient(100deg,#1b2546,#243260); border-color:#345; }
   .from-admin{ align-self:flex-start; background:linear-gradient(100deg,#15351f,#193826); border-color:#355a45; }
   .meta{ position:relative; font-size:11px; color:#cbd5e1; opacity:.9; margin:0 6px 4px 6px; }
   .meta.right{ text-align:right }
@@ -120,9 +122,9 @@
   .empty{ text-align:center; color:var(--muted); margin-top:18px; }
 }
 
-/* Scrollbar custom — mantém teu visual */
+/* 🔹 Scrollbar custom — mantém teu visual */
 .chat-body{
-  scrollbar-width: thin;
+  scrollbar-width: thin;           
   scrollbar-color: #3b82f6 #0c1224;
 }
 .chat-body::-webkit-scrollbar{
