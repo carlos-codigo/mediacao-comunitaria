@@ -408,6 +408,67 @@ body{
 .equipa-card:nth-child(4){
   border-color: rgba(244,114,182,.9);
 }
+/* ===========================================================
+   🔥 TEAM SECTION — MOBILE
+   Responsivo com cards stacked
+=========================================================== */
+
+.team-section {
+  padding: 90px 0;
+  background: linear-gradient(180deg, #0C1020, var(--bg2));
+}
+
+.team-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 26px;
+  font-weight: 800;
+  text-shadow: var(--neon);
+}
+
+.team-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 18px;
+}
+
+.team-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: .25s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--neon);
+}
+
+.team-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--primary), var(--violet), var(--secondary));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.team-card .role {
+  font-size: .9rem;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.team-card .bio {
+  margin-top: 6px;
+  font-size: .83rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
 
 
 
