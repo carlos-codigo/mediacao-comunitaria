@@ -324,3 +324,70 @@ body{
 .menu-btn {
   display: block;
 }
+/* ===========================================================
+   ⭐ SEÇÃO — EQUIPE (MOBILE)
+=========================================================== */
+.equipa {
+  padding: 90px 0;
+  text-align:center;
+}
+
+.container-equipa {
+  padding: 0 18px;
+}
+
+.equipa-title {
+  font-size: 2rem;
+  font-weight:800;
+  text-shadow:var(--neon);
+  margin-bottom: 24px;
+}
+
+.equipa-founder {
+  background: var(--glass);
+  padding: 36px 22px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  box-shadow:var(--shadow);
+}
+
+.equipa-name {
+  font-size: 2rem;
+  font-weight:900;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg,var(--primary),var(--violet),var(--secondary));
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.equipa-role {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.equipa-subtitle {
+  margin-top:40px;
+  font-size:1.3rem;
+  color:var(--text);
+  opacity:.9;
+  margin-bottom:20px;
+}
+
+.equipa-grid {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.equipa-card {
+  padding:18px;
+  background:var(--glass);
+  border-radius:var(--radius);
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  font-size:1.05rem;
+  font-weight:600;
+}
+
