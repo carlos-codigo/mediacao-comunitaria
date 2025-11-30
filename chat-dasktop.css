@@ -111,3 +111,18 @@
 
   .empty{ text-align:center; color:var(--muted); margin-top:18px; }
 }
+.chat-body{
+  scrollbar-width: thin;           /* Firefox */
+  scrollbar-color: #3b82f6 #0c1224;/* Cor da barra + trilha */
+}
+.chat-body::-webkit-scrollbar{
+  width: 8px;                      /* Largura da barra */
+}
+.chat-body::-webkit-scrollbar-track{
+  background: #0c1224;
+}
+.chat-body::-webkit-scrollbar-thumb{
+  background: #3b82f6;
+  border-radius: 6px;
+}
+
