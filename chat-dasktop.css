@@ -45,7 +45,7 @@
     grid-template-columns: 320px 1fr;
     gap:16px;
     height:100%;
-    grid-template-rows: minmax(0, 1fr); /* 🔹 NOVO: limita a linha à altura disponível */
+    grid-template-rows: minmax(0, 1fr); /* limita a linha à altura disponível */
   }
 
   .conf-list{
@@ -69,8 +69,8 @@
     display:flex;
     flex-direction:column;
     min-width:0;
-    height:100%;   /* 🔹 NOVO: ocupa toda a linha do grid */
-    min-height:0;  /* 🔹 NOVO: permite o filho (chat-body) encolher e scrollar */
+    height:100%;   /* ocupa toda a linha do grid */
+    min-height:0;  /* permite o filho (chat-body) encolher e scrollar */
   }
 
   .chat-header-desktop{
@@ -82,7 +82,8 @@
 
   .chat-body{
     flex:1;
-    overflow-y:auto; /* 🔹 reforçado: scroll vertical dentro da área de mensagens */
+    overflow-y:auto; /* scroll vertical dentro da área de mensagens */
+    max-height: calc(100vh - 220px); /* 🔹 NOVO: limita a altura como no mobile */
     padding:18px;
     background:linear-gradient(180deg,#0c1224cc,#0b1120d0);
     border:1px solid var(--border, #334155); border-radius:var(--radius, 18px);
