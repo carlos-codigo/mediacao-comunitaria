@@ -128,5 +128,37 @@
 .chat-panel{
   min-height: 0;
 }
+/* 🔽 ADICIONE ISSO NO FINAL DO CSS 🔽 */
+@media (min-width: 801px){
+  /* Garante que a linha do grid respeita a altura da tela
+     e deixe o conteúdo interno (chat) rolar com scroll */
+  .shell{
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Faz o painel do chat ocupar 100% da altura disponível */
+  .chat-panel{
+    height: 100%;
+    min-height: 0; /* reforço, não atrapalha nada do que você já tem */
+  }
+
+  /* Habilita scroll vertical dentro da área de mensagens */
+  .chat-body{
+    overflow-y: auto;             /* força scroll vertical */
+    scrollbar-width: thin;        /* Firefox */
+    scrollbar-color: #3b82f6 #0c1224;
+  }
+  .chat-body::-webkit-scrollbar{
+    width: 8px;
+  }
+  .chat-body::-webkit-scrollbar-track{
+    background: #0c1224;
+  }
+  .chat-body::-webkit-scrollbar-thumb{
+    background: #3b82f6;
+    border-radius: 6px;
+  }
+}
+
 
 
