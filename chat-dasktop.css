@@ -125,4 +125,8 @@
   background: #3b82f6;
   border-radius: 6px;
 }
+.chat-panel{
+  min-height: 0;
+}
+
 
