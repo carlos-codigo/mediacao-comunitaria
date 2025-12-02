@@ -73,10 +73,18 @@
   /* ==========================
      TABELA
      ========================== */
-  .users-table-wrapper {
+   .users-table-wrapper {
     padding: 0;
-    overflow: hidden;
+    border-radius: 18px;               /* mantém o jeitão de card */
+    
+    /* 👇 Scroll interno na caixa da tabela */
+    overflow-y: auto;
+    overflow-x: auto;                  /* se um dia as colunas ficarem muito largas */
+    
+    /* altura máxima para caber na tela sem estourar */
+    max-height: calc(100vh - 260px);   /* ajusta se quiser mais/menos espaço */
   }
+
 
   .users-table {
     width: 100%;
@@ -147,3 +155,4 @@
     transform: translateY(-1px);
   }
 }
+
