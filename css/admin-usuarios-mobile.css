@@ -38,10 +38,18 @@
   }
 
   /* Card da tabela = vira "caixa" com scroll horizontal */
-  .users-table-wrapper {
+    .users-table-wrapper {
     padding: 10px;
+
+    /* Scroll pros dois lados quando precisar */
     overflow-x: auto;
+    overflow-y: auto;
+
+    /* limita a altura no mobile pra não ficar gigante */
+    max-height: 65vh;
+    border-radius: 16px;
   }
+
 
   .users-table {
     width: 100%;
@@ -101,3 +109,4 @@
     box-shadow: 0 8px 16px rgba(56,189,248,.25);
   }
 }
+
